@@ -1,8 +1,9 @@
+// TenantInfoStep.tsx
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { Input, Select, SelectItem, Spinner } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import { TenantFormData } from "@/types/customer-portal";
+import { TenantFormData, Server } from "@/types/customer-portal";
 import {
   getTimeZones,
   isValidAccessCode,
@@ -12,6 +13,7 @@ import { MAIN_DOMAIN } from "@/config/constants";
 import { Check, Cross } from "lucide-react";
 import { Cross1Icon } from "@radix-ui/react-icons";
 import { useDebounce } from "@/hooks/useDebounce";
+import { supabase } from "@/lib/supabase";
 
 interface TenantInfoStepProps {
   data: Partial<TenantFormData>;
@@ -23,6 +25,7 @@ interface TenantInfoStepProps {
     validatingAccessCode?: boolean;
     validatingDomain?: boolean;
   }) => void;
+  onServerSelect?: (server: Server) => void; // Added this prop
 }
 
 export function TenantInfoStep({
@@ -30,6 +33,7 @@ export function TenantInfoStep({
   errors,
   onChange,
   onValidationChange,
+  onServerSelect,
 }: TenantInfoStepProps) {
   const [validatingAccessCode, setValidatingAccessCode] = useState(false);
   const [validatingDomain, setValidatingDomain] = useState(false);
@@ -40,9 +44,40 @@ export function TenantInfoStep({
   const [accessCode, setAccessCode] = useState(data.access_code || "");
   const [domain, setDomain] = useState(data.subdomain || "");
 
-  const debouncedAccessCode = useDebounce(accessCode, 500); // 1000ms baad trigger hoga
+  // New states for server dropdown
+  const [servers, setServers] = useState<Server[]>([]);
+  const [loadingServers, setLoadingServers] = useState(true);
+  const [selectedServer, setSelectedServer] = useState<Server | null>(null);
+
+  const debouncedAccessCode = useDebounce(accessCode, 500);
   const debouncedDomain = useDebounce(domain, 500);
   const timezonesFetchedOnce = useRef(false);
+
+  // Fetch servers
+  useEffect(() => {
+    const fetchServers = async () => {
+      try {
+        setLoadingServers(true);
+        const { data: serversData, error } = await supabase
+          .schema("multi_tenant_admin")
+          .from("servers")
+          .select(
+            "id, name, description, provider, status, domain, region, no_of_cpu_cores, ram, storage_capacity"
+          )
+          .eq("status", "active")
+          .order("name");
+
+        if (error) throw error;
+        setServers(serversData || []);
+      } catch (error) {
+        console.error("Error fetching servers:", error);
+      } finally {
+        setLoadingServers(false);
+      }
+    };
+
+    fetchServers();
+  }, []);
 
   // inform parent initially
   useEffect(() => {
@@ -156,6 +191,16 @@ export function TenantInfoStep({
     onChange("subdomain", value);
   };
 
+  // Handle server selection
+  const handleServerChange = (serverId: string) => {
+    const server = servers.find((s) => s.id === serverId);
+    if (server) {
+      setSelectedServer(server);
+      onChange("server_id", serverId);
+      onServerSelect?.(server);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -163,7 +208,7 @@ export function TenantInfoStep({
         <div className="space-y-2">
           <label
             htmlFor="name"
-            className="text-sm font-medium text-default-700 flex items-center gap-2"
+            className="text-sm font-medium flex items-center gap-2"
           >
             <Icon icon="heroicons:building-office" className="h-4 w-4" />
             Tenant Name
@@ -187,7 +232,7 @@ export function TenantInfoStep({
         <div className="space-y-2">
           <label
             htmlFor="business_reg_number"
-            className="text-sm font-medium text-default-700 flex items-center gap-2"
+            className="text-sm font-medium flex items-center gap-2"
           >
             <Icon icon="heroicons:document-text" className="h-4 w-4" />
             Business Registration Number
@@ -208,81 +253,43 @@ export function TenantInfoStep({
         </div>
 
         {/* Access Code */}
-        <div className="space-y-2">
+        <div className="space-y-2 col-span-2">
           <label
             htmlFor="access_code"
-            className="text-sm font-medium text-default-700 flex items-center gap-2"
+            className="text-sm font-medium flex items-center gap-2"
           >
             <Icon icon="heroicons:key" className="h-4 w-4" />
             Access Code
           </label>
-          <div className="relative">
-            <Input
-              id="access_code"
-              isRequired
-              errorMessage={errors.access_code}
-              isInvalid={!!errors.access_code || accessCodeValid === false}
-              placeholder="Enter access code"
-              radius="lg"
-              size="lg"
-              type="text"
-              value={data.access_code || ""}
-              variant="bordered"
-              onChange={handleAccessCodeChange}
-              endContent={
-                validatingAccessCode ? (
-                  <Spinner size="sm" />
-                ) : accessCodeValid && data.access_code?.length !== 0 ? (
-                  <div className="flex items-center justify-center rounded-full w-[20px] h-[20px] bg-green-500 p-1">
-                    <Check className="text-white w-4 h-4" />
-                  </div>
-                ) : accessCodeValid === false &&
-                  data.access_code?.length !== 0 ? (
-                  <div className="flex items-center justify-center rounded-full w-[20px] h-[20px] bg-red-500 p-1">
-                    <Cross className="text-white w-4 h-4" />
-                  </div>
-                ) : null
-              }
-            />
-            {accessCodeValid === false && (
-              <p className="text-xs text-danger mt-1">Invalid access code</p>
-            )}
-          </div>
-        </div>
-
-        {/* Time Zone */}
-        <div className="space-y-2">
-          <label
-            htmlFor="time_zone"
-            className="text-sm font-medium text-default-700 flex items-center gap-2"
-          >
-            <Icon icon="heroicons:clock" className="h-4 w-4" />
-            Time Zone
-          </label>
-          {loadingTimezones ? (
-            <div className="flex items-center justify-center p-4">
-              <Spinner size="sm" />
-              <span className="ml-2">Loading timezones...</span>
-            </div>
-          ) : (
-            <Select
-              className=""
-              id="time_zone"
-              isRequired
-              errorMessage={errors.time_zone}
-              isInvalid={!!errors.time_zone}
-              placeholder="Select a time zone"
-              radius="lg"
-              size="lg"
-              variant="bordered"
-              selectedKeys={data.time_zone ? [data.time_zone] : []}
-              onChange={(e) => onChange("time_zone", e.target.value)}
-            >
-              {timezones.map((timezone) => (
-                <SelectItem key={timezone}>{timezone}</SelectItem>
-              ))}
-            </Select>
-          )}
+          <Input
+            id="access_code"
+            isRequired
+            errorMessage={errors.access_code}
+            isInvalid={!!errors.access_code || accessCodeValid === false}
+            placeholder="Enter access code"
+            radius="lg"
+            size="lg"
+            type="text"
+            value={accessCode}
+            variant="bordered"
+            onChange={(e) => {
+              setAccessCode(e.target.value);
+              onChange("access_code", e.target.value);
+            }}
+            endContent={
+              validatingAccessCode ? (
+                <Spinner size="sm" />
+              ) : accessCodeValid && accessCode.length > 0 ? (
+                <div className="flex items-center justify-center rounded-full w-[20px] h-[20px] bg-green-500 p-1">
+                  <Check className="text-white w-4 h-4" />
+                </div>
+              ) : accessCodeValid === false && accessCode.length > 0 ? (
+                <div className="flex items-center justify-center rounded-full w-[20px] h-[20px] bg-red-500 p-1">
+                  <Cross className="text-white w-4 h-4" />
+                </div>
+              ) : null
+            }
+          />
         </div>
 
         {/* Domain */}
@@ -331,6 +338,82 @@ export function TenantInfoStep({
               {`${data.subdomain || "your_domain"}.${MAIN_DOMAIN}`}
             </div>
           </div>
+        </div>
+
+        {/* Server + Timezone */}
+        <div className="space-y-2">
+          <label
+            htmlFor="server"
+            className="text-sm font-medium flex items-center gap-2"
+          >
+            <Icon icon="heroicons:server" className="h-4 w-4" />
+            Server
+          </label>
+          {loadingServers ? (
+            <div className="flex items-center justify-center p-4">
+              <Spinner size="sm" />
+              <span className="ml-2">Loading servers...</span>
+            </div>
+          ) : (
+            <Select
+              id="server"
+              isRequired
+              errorMessage={errors.server_id}
+              isInvalid={!!errors.server_id}
+              placeholder="Select a server"
+              radius="lg"
+              size="lg"
+              variant="bordered"
+              className="max-h-60 overflow-y-auto"
+              selectedKeys={data.server_id ? [data.server_id] : []}
+              onChange={(e) => handleServerChange(e.target.value)}
+            >
+              {servers.map((server) => (
+                <SelectItem key={server.id} textValue={server.name}>
+                  <div className="flex flex-col">
+                    <span className="font-medium">{server.name}</span>
+                    <span className="text-xs text-default-400">
+                      {server.provider} • {server.region}
+                    </span>
+                  </div>
+                </SelectItem>
+              ))}
+            </Select>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <label
+            htmlFor="time_zone"
+            className="text-sm font-medium flex items-center gap-2"
+          >
+            <Icon icon="heroicons:clock" className="h-4 w-4" />
+            Time Zone
+          </label>
+          {loadingTimezones ? (
+            <div className="flex items-center justify-center p-4">
+              <Spinner size="sm" />
+              <span className="ml-2">Loading timezones...</span>
+            </div>
+          ) : (
+            <Select
+              id="time_zone"
+              isRequired
+              errorMessage={errors.time_zone}
+              isInvalid={!!errors.time_zone}
+              placeholder="Select a time zone"
+              radius="lg"
+              size="lg"
+              variant="bordered"
+              className="max-h-60 overflow-y-auto"
+              selectedKeys={data.time_zone ? [data.time_zone] : []}
+              onChange={(e) => onChange("time_zone", e.target.value)}
+            >
+              {timezones.map((timezone) => (
+                <SelectItem key={timezone}>{timezone}</SelectItem>
+              ))}
+            </Select>
+          )}
         </div>
       </div>
     </div>

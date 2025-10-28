@@ -5,7 +5,6 @@ import {
   ChevronUp,
   Loader2,
   AlertCircle,
-  CheckCircle,
 } from "lucide-react";
 import { fetchProductConfiguration } from "@/lib/api/helper";
 import { Button } from "@heroui/react";
@@ -49,7 +48,7 @@ interface FeatureConfig {
   feature_name: string;
   required: boolean;
   config: {
-    form_data: FormGroup[];
+    form: FormGroup[];
   };
 }
 
@@ -386,7 +385,7 @@ const DynamicConfigForm: React.FC<DynamicConfigFormProps> = ({
               )}
             </div>
 
-            {feature.config.form_data.map((group: FormGroup) => {
+            {feature.config.form.map((group: FormGroup) => {
               const groupKey = `${feature.feature_name}-${group.name}`;
               const isExpanded = expandedGroups[groupKey];
 
@@ -466,7 +465,7 @@ const DynamicConfigForm: React.FC<DynamicConfigFormProps> = ({
         
         {/* Create Tenant button at the bottom of the configuration form */}
         {onSubmit && (
-          <div className="mt-8 flex justify-end">
+          <div className="mt-12 -mb-17 flex justify-end">
             <Button
               color="primary"
               onClick={onSubmit}

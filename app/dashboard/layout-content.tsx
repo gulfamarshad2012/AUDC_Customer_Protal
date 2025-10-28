@@ -13,12 +13,12 @@ export default function DashboardLayoutContent({
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   return (
-    <div className="flex h-screen bg-gray-100 dark:bg-neutral-800">
+    <div className="flex h-screen bg-gray-100">
       {/* Sidebar fixed height */}
       <SidebarDemo open={isMobileOpen} setOpen={setIsMobileOpen} />
 
       {/* Main content should scroll independently */}
-      <main className="flex-1 overflow-y-auto p-4 dark:text-white bg-white dark:bg-neutral-900 rounded-tl-2xl border border-neutral-200 dark:border-neutral-700 m-2">
+      <main className="flex-1 overflow-y-auto p-4 bg-white rounded-tl-2xl border border-neutral-200 m-2">
         {children}
         <Toaster />
       </main>

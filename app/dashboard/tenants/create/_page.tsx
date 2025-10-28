@@ -1,11 +1,10 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Button, Card } from "@heroui/react";
+import { Button, Card, Progress } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { TenantFormData, Server, Product } from "@/types/customer-portal";
 import { supabase } from "@/lib/supabase";
 import { TenantInfoStep } from "@/components/customer-portal/tenants/TenantInfoStep";
-import { ServerSelectionStep } from "@/components/customer-portal/tenants/ServerSelectionStep";
 import { ProductSelectionStep } from "@/components/customer-portal/tenants/ProductSelectionStep";
 import toast from "react-hot-toast";
 import { createTenantApi, fetchProductsHelper } from "@/lib/api/helper";
@@ -26,7 +25,6 @@ export default function AddTenantPageInner() {
   >({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
   const [servers, setServers] = useState<Server[]>([]);
   const [loadingServers, setLoadingServers] = useState(true);
   const [loadingProducts, setLoadingProducts] = useState(true);
@@ -37,6 +35,11 @@ export default function AddTenantPageInner() {
   const [productConfigData, setProductConfigData] = useState<
     Record<string, any>
   >({});
+
+  // Progress state
+  const [progress, setProgress] = useState(0);
+  const [showProgress, setShowProgress] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   // ---- LIFTED validation states (new) ----
   const [accessCodeValid, setAccessCodeValid] = useState<boolean | null>(null);
@@ -80,14 +83,14 @@ export default function AddTenantPageInner() {
   }, []);
 
   useEffect(() => {
-    if (submitSuccess) {
+    if (showSuccess) {
       const timer = setTimeout(() => {
-        setSubmitSuccess(false);
+        setShowSuccess(false);
         router.push("/dashboard/tenants");
       }, 5000);
       return () => clearTimeout(timer);
     }
-  }, [submitSuccess, router]);
+  }, [showSuccess, router]);
 
   useEffect(() => {
     if (submitError) {
@@ -101,7 +104,6 @@ export default function AddTenantPageInner() {
   const getSteps = () => {
     const steps = [
       { title: "Tenant Information" },
-      { title: "Server Selection" },
       { title: "Product Selection" },
       { title: "Product Configuration" },
     ];
@@ -116,7 +118,8 @@ export default function AddTenantPageInner() {
     !data.subdomain ||
     !data.name ||
     !data.business_reg_number ||
-    !data.time_zone;
+    !data.time_zone ||
+    !data.server_id;
 
   useEffect(() => {
     fetchServers();
@@ -153,6 +156,12 @@ export default function AddTenantPageInner() {
     }
   };
 
+  // Handle server selection from TenantInfoStep
+  const handleServerSelect = (server: Server) => {
+    setSelectedServerId(server.id);
+    setData((prev) => ({ ...prev, server_id: server.id }));
+  };
+
   const validateForm = () => {
     let valid = true;
     const newErrors: Partial<Record<keyof TenantFormData, string>> = {};
@@ -175,6 +184,9 @@ export default function AddTenantPageInner() {
         newErrors.business_reg_number =
           "Business registration number is required";
       }
+      if (!data.server_id?.trim()) {
+        newErrors.server_id = "Server selection is required";
+      }
 
       // If async validation is still running, block proceeding
       if (validatingAccessCode || validatingDomain) {
@@ -192,11 +204,6 @@ export default function AddTenantPageInner() {
         valid = false;
       }
     } else if (currentStep === 1) {
-      if (!selectedServerId) {
-        setSubmitError("Please select a server");
-        return false;
-      }
-    } else if (currentStep === 2) {
       if (!selectedProductId) {
         setSubmitError("Please select a product");
         return false;
@@ -214,12 +221,12 @@ export default function AddTenantPageInner() {
       return;
     }
 
-    if (currentStep < 3) {
+    if (currentStep < 1) {
       removeParam("product_id");
     }
 
-    // Example: Add product_id into search params on step 2
-    if (currentStep === 2 && selectedProductId) {
+    // Example: Add product_id into search params on step 1
+    if (currentStep === 1 && selectedProductId) {
       const params = new URLSearchParams(searchParams.toString());
       params.set("product_id", selectedProductId);
 
@@ -236,18 +243,23 @@ export default function AddTenantPageInner() {
   };
 
   const handleBack = () => {
-    setCurrentStep((prev) => prev - 1);
+    const prevStep = currentStep - 1;
 
-    if (currentStep < 3) {
+    // Step 2 → Step 1 (Product Config → Product Selection)
+    if (currentStep === 2) {
+      if (selectedProductId) {
+        const params = new URLSearchParams(searchParams.toString());
+        params.set("product_id", selectedProductId);
+        router.push(`?${params.toString()}`);
+      }
+    }
+
+    // Step 1 → Step 0 (Product Selection → Tenant Info)
+    if (currentStep === 1) {
       removeParam("product_id");
     }
 
-    if (currentStep === 3 && selectedProductId) {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set("product_id", selectedProductId);
-
-      router.push(`?${params.toString()}`);
-    }
+    setCurrentStep(prevStep);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -256,7 +268,7 @@ export default function AddTenantPageInner() {
     const tenantData = {
       name: data.name,
       access_code: data.access_code,
-      server_id: selectedServerId,
+      server_id: data.server_id || selectedServerId,
       product_id: selectedProductId,
       subdomain: data.subdomain,
       business_reg_number: data.business_reg_number,
@@ -273,25 +285,48 @@ export default function AddTenantPageInner() {
 
     try {
       setIsSubmitting(true);
+      setShowProgress(true);
+      setProgress(0);
+
+      // Simulate progress updates
+      const progressInterval = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 90) {
+            clearInterval(progressInterval);
+            return prev;
+          }
+          return prev + 10;
+        });
+      }, 300);
 
       const response = await createTenantApi(tenantData);
 
-      // Check if response indicates success
-      if (response && response.success) {
-        setSubmitSuccess(true);
-        setData({});
-        setSelectedServerId("");
-        setSelectedProductId("");
-        setProductConfigData({});
-        toast.success("Tenant created successfully!");
-      } else {
-        setSubmitError(response?.message || "Failed to create tenant");
-        toast.error("Failed to create tenant");
-      }
+      // Complete the progress
+      clearInterval(progressInterval);
+      setProgress(100);
+
+      // Wait a moment to show 100% before showing success
+      setTimeout(() => {
+        setShowProgress(false);
+
+        // Check if response indicates success
+        if (response && response.success) {
+          setShowSuccess(true);
+          setData({});
+          setSelectedServerId("");
+          setSelectedProductId("");
+          setProductConfigData({});
+          toast.success("Tenant created successfully!");
+        } else {
+          setSubmitError(response?.message || "Failed to create tenant");
+          toast.error("Failed to create tenant");
+        }
+      }, 500);
     } catch (error: any) {
       console.error("Error creating tenant:", error);
       setSubmitError(error.message || "Failed to create tenant");
       toast.error("Failed to create tenant");
+      setShowProgress(false);
     } finally {
       setIsSubmitting(false);
     }
@@ -316,19 +351,10 @@ export default function AddTenantPageInner() {
               if (payload.validatingDomain !== undefined)
                 setValidatingDomain(payload.validatingDomain);
             }}
+            onServerSelect={handleServerSelect}
           />
         );
       case 1:
-        return (
-          <ServerSelectionStep
-            servers={servers}
-            selectedServerId={selectedServerId}
-            setSelectedServerId={setSelectedServerId}
-            loadingServers={loadingServers}
-            setSubmitError={setSubmitError}
-          />
-        );
-      case 2:
         return (
           <ProductSelectionStep
             products={products}
@@ -339,7 +365,7 @@ export default function AddTenantPageInner() {
             onNextStep={handleNext}
           />
         );
-      case 3:
+      case 2:
         return (
           <DynamicConfigForm
             productId={selectedProductId}
@@ -380,55 +406,6 @@ export default function AddTenantPageInner() {
         disableFutureSteps
       />
 
-      {submitSuccess && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-          <div className="bg-white rounded-xl p-8 max-w-md w-full mx-4 transform transition-all duration-300 scale-100 animate-in fade-in-90 zoom-in-90">
-            <div className="text-center">
-              <div className="flex justify-center mb-4">
-                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-green-100">
-                  <Icon
-                    icon="heroicons:check-circle"
-                    className="h-10 w-10 text-green-600"
-                  />
-                </div>
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                Tenant Created Successfully!
-              </h3>
-              <p className="text-gray-600 mb-6">
-                Your new tenant{" "}
-                <span className="font-semibold">{data.name}</span> has been
-                created and is now active.
-              </p>
-              <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left">
-                <div className="flex justify-between mb-2">
-                  <span className="text-gray-500">Tenant Name:</span>
-                  <span className="font-medium">{data.name}</span>
-                </div>
-                <div className="flex justify-between mb-2">
-                  <span className="text-gray-500">Domain:</span>
-                  <span className="font-medium">{data.subdomain}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Status:</span>
-                  <span className="font-medium text-green-600">Active</span>
-                </div>
-              </div>
-              <Button
-                color="primary"
-                className="w-full"
-                onClick={() => {
-                  setSubmitSuccess(false);
-                  router.push("/dashboard/tenants");
-                }}
-              >
-                Go to Tenants Dashboard
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {submitError && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
           <div className="flex items-center">
@@ -438,20 +415,30 @@ export default function AddTenantPageInner() {
         </div>
       )}
 
-      <Card className="p-6">
+      <Card className="p-6 bg-card text-card-foreground">
         {renderStep()}
         <div className="flex justify-between mt-6">
-          <Button
-            variant="bordered"
-            className={`${currentStep === 0 ? "cursor-not-allowed" : ""} ${currentStep === 0 && "hidden"}`}
-            onClick={handleBack}
-            disabled={isSubmitting}
-          >
-            Back
-          </Button>
+          {currentStep === 0 ? (
+            <Button
+              variant="bordered"
+              onClick={() => router.back()}
+              disabled={isSubmitting}
+            >
+              Cancel
+            </Button>
+          ) : (
+            <Button
+              variant="bordered"
+              className={`${currentStep === 0 ? "cursor-not-allowed" : ""} ${currentStep === 0 && "hidden"}`}
+              onClick={handleBack}
+              disabled={isSubmitting}
+            >
+              Back
+            </Button>
+          )}
 
-          {/* Only show Next button for steps 0, 1, and 2 */}
-          {currentStep < 3 && (
+          {/* Only show Next button for steps 0 and 1 */}
+          {currentStep < 2 && (
             <Button
               color="primary"
               className={`${isFormEmpty ? "cursor-not-allowed opacity-50 hover:bg-black/55" : ""} ml-auto`}
@@ -464,6 +451,134 @@ export default function AddTenantPageInner() {
           )}
         </div>
       </Card>
+
+      {/* Progress Modal */}
+      {showProgress && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="bg-white rounded-xl p-8 max-w-md w-full mx-4 transform transition-all duration-300 scale-100 animate-in fade-in-90 zoom-in-90">
+            <div className="text-center">
+              <div className="flex justify-center mb-6">
+                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 animate-pulse">
+                  <Icon
+                    icon="heroicons:arrow-path"
+                    className="h-8 w-8 text-blue-600 animate-spin"
+                  />
+                </div>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                Creating Tenant
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Please wait while we set up your tenant organization. This may
+                take a few moments.
+              </p>
+
+              <div className="mb-2">
+                <Progress
+                  aria-label="Creating tenant..."
+                  className="max-w-md"
+                  color="primary"
+                  showValueLabel={true}
+                  size="md"
+                  value={progress}
+                />
+              </div>
+
+              <p className="text-sm text-gray-500 mt-4">
+                {progress < 30 && "Initializing tenant configuration..."}
+                {progress >= 30 &&
+                  progress < 60 &&
+                  "Setting up server resources..."}
+                {progress >= 60 &&
+                  progress < 90 &&
+                  "Configuring tenant settings..."}
+                {progress >= 90 && "Finalizing tenant creation..."}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Success Modal */}
+      {showSuccess && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="bg-white rounded-xl p-8 max-w-md w-full mx-4 transform transition-all duration-300 scale-100 animate-in fade-in-90 zoom-in-90">
+            <div className="text-center">
+              <div className="flex justify-center mb-4">
+                <div className="flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-r from-green-400 to-emerald-500">
+                  <Icon
+                    icon="heroicons:check-circle"
+                    className="h-10 w-10 text-white"
+                  />
+                </div>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                Tenant Created Successfully!
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Your new tenant{" "}
+                <span className="font-semibold text-emerald-600">
+                  {data.name}
+                </span>{" "}
+                has been created and is now active.
+              </p>
+
+              <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-6 mb-6 text-left border border-green-200">
+                <div className="flex justify-between mb-3">
+                  <span className="text-gray-600">Tenant Name:</span>
+                  <span className="font-medium">{data.name}</span>
+                </div>
+                <div className="flex justify-between mb-3">
+                  <span className="text-gray-600">Domain:</span>
+                  <span className="font-medium">{data.subdomain}</span>
+                </div>
+                <div className="flex justify-between mb-3">
+                  <span className="text-gray-600">Product:</span>
+                  <span className="font-medium">
+                    {products.find((p) => p.id === selectedProductId)?.name ||
+                      "Selected Product"}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Status:</span>
+                  <span className="font-medium text-green-600 flex items-center gap-1">
+                    <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                    Active
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button
+                  variant="bordered"
+                  className="flex-1"
+                  onClick={() => {
+                    setShowSuccess(false);
+                    // Reset form to create another tenant
+                    setData({});
+                    setSelectedServerId("");
+                    setSelectedProductId("");
+                    setProductConfigData({});
+                    setCurrentStep(0);
+                  }}
+                >
+                  Create Another
+                </Button>
+                <Button
+                  color="primary"
+                  className="flex-1"
+                  onClick={() => {
+                    setShowSuccess(false);
+                    router.push("/dashboard/tenants");
+                  }}
+                >
+                  Go to Dashboard
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

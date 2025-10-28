@@ -129,7 +129,7 @@ const RowSteps = React.forwardRef<HTMLButtonElement, RowStepsProps>(
     return (
       <nav
         aria-label="Progress"
-        className="-my-4 max-w-fit md:ml-14 overflow-x-auto py-4"
+        className="-my-4 max-w-fit mx-auto overflow-x-auto py-4"
       >
         <ol
           className={cn("flex flex-row flex-nowrap gap-x-3", colors, className)}
@@ -153,7 +153,7 @@ const RowSteps = React.forwardRef<HTMLButtonElement, RowStepsProps>(
                   ref={ref}
                   aria-current={status === "active" ? "step" : undefined}
                   className={cn(
-                    "rounded-large cursor-not-allowed group flex w-[138px] flex-row items-center justify-center gap-x-3 py-2.5",
+                    "rounded-large cursor-not-allowed group flex w-[220px] flex-row items-center justify-center gap-x-3 py-2.5",
                     {
                       "opacity-50": isDisabled,
                     },
@@ -167,7 +167,7 @@ const RowSteps = React.forwardRef<HTMLButtonElement, RowStepsProps>(
                           initial={false}
                           transition={{ duration: 0.25 }}
                           className={cn(
-                            " border-medium text-large text-default-foreground relative flex h-[30px] w-[30px] items-center justify-center rounded-full font-semibold",
+                            " border-medium text-large text-default-foreground relative flex h-[35px] w-[35px] items-center justify-center rounded-full font-semibold",
                             {
                               "shadow-lg": status === "complete",
                             }
@@ -180,8 +180,8 @@ const RowSteps = React.forwardRef<HTMLButtonElement, RowStepsProps>(
                             },
                             complete: {
                               backgroundColor:
-                                "var(--complete-background-color)",
-                              borderColor: "var(--complete-border-color)",
+                                "var(--primary)",
+                              borderColor: "var(--primary)",
                             },
                             inactive: {
                               backgroundColor: "transparent",
@@ -204,7 +204,7 @@ const RowSteps = React.forwardRef<HTMLButtonElement, RowStepsProps>(
                   <div className="max-w-full text-start">
                     <div
                       className={cn(
-                        "text-small text-default-foreground lg:text-sm font-medium transition-[color,opacity] duration-300 group-active:opacity-80",
+                        "text-small text-default-foreground lg:text-medium font-medium transition-[color,opacity] duration-300 group-active:opacity-80",
                         {
                           "text-default-500": status === "inactive",
                         }
@@ -225,7 +225,7 @@ const RowSteps = React.forwardRef<HTMLButtonElement, RowStepsProps>(
                       <div
                         className={cn(
                           "relative h-0.5 w-full bg-(--inactive-bar-color) transition-colors duration-300",
-                          "after:absolute after:block after:h-full after:w-0 after:bg-(--active-border-color) after:transition-[width] after:duration-300 after:content-['']",
+                          "after:absolute after:block after:h-full after:w-0 after:bg-primary after:transition-[width] after:duration-300 after:content-['']",
                           {
                             "after:w-full": stepIdx < currentStep,
                           }

@@ -47,6 +47,7 @@ export default function BillingHistoryPage() {
   const [tenants, setTenants] = useState<Tenant[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
+  
 
   useEffect(() => {
     const fetchTenants = async () => {

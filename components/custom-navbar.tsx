@@ -46,7 +46,8 @@ function CustomNavbar() {
     } = await supabase.auth.getUser();
 
     if (error) {
-      toast.error("Error fetching user:" + error.message);
+      // toast.error("Error fetching user:" + error.message);
+      console.log("Error fetching user: " + error.message);
       return null;
     }
     setFindUser(user);
@@ -113,10 +114,7 @@ function CustomNavbar() {
             <Button
               className="mt-4"
               color="primary"
-              onClick={() =>
-                (window.location.href =
-                  `${BASE_URL}/login`)
-              }
+              onClick={() => (window.location.href = `${BASE_URL}/login`)}
             >
               Login
             </Button>

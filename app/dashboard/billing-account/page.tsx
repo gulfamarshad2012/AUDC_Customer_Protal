@@ -175,8 +175,8 @@ const App = () => {
   };
 
   return (
-    <div className="bg-gray-50 dark:bg-gray-950 flex min-h-screen items-center justify-center p-4 sm:p-6 lg:p-8">
-      <Card className="w-full max-w-full rounded-xl shadow-lg dark:shadow-2xl">
+    <div className="bg-gray-50 flex min-h-screen items-center justify-center p-4 sm:p-6 lg:p-8">
+      <Card className="w-full max-w-full rounded-xl shadow-lg">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
             Billing Account Management
@@ -404,7 +404,7 @@ const App = () => {
                     onChange={handleChange}
                     placeholder="cus_1234567890"
                     disabled
-                    className="bg-gray-100 dark:bg-gray-800"
+                    className="bg-gray-100"
                   />
                 </div>
                 <div className="space-y-2">
@@ -426,7 +426,7 @@ const App = () => {
                     onChange={handleChange}
                     placeholder="0.00"
                     disabled
-                    className="bg-gray-100 dark:bg-gray-800"
+                    className="bg-gray-100"
                   />
                 </div>
               </div>
@@ -527,7 +527,7 @@ const App = () => {
                     id="createdBy"
                     value={formData.createdBy || ""}
                     disabled
-                    className="bg-gray-100 dark:bg-gray-800"
+                    className="bg-gray-100"
                   />
                 </div>
                 <div className="space-y-2">
@@ -536,7 +536,7 @@ const App = () => {
                     id="createdAt"
                     value={new Date(formData.createdAt).toLocaleString()}
                     disabled
-                    className="bg-gray-100 dark:bg-gray-800"
+                    className="bg-gray-100"
                   />
                 </div>
                 <div className="space-y-2">
@@ -545,7 +545,7 @@ const App = () => {
                     id="modifiedBy"
                     value={formData.modifiedBy || "N/A"}
                     disabled
-                    className="bg-gray-100 dark:bg-gray-800"
+                    className="bg-gray-100"
                   />
                 </div>
                 <div className="space-y-2">
@@ -554,7 +554,7 @@ const App = () => {
                     id="modifiedAt"
                     value={formData.modifiedAt ? new Date(formData.modifiedAt).toLocaleString() : "N/A"}
                     disabled
-                    className="bg-gray-100 dark:bg-gray-800"
+                    className="bg-gray-100"
                   />
                 </div>
               </div>

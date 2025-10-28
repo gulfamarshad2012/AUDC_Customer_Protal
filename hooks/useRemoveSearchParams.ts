@@ -1,21 +1,23 @@
-import { useRouter, useSearchParams } from "next/navigation";
+"use client";
+
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
 export function useRemoveSearchParam() {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const removeParam = (key: string) => {
+    // new instance banao taake read-only problem na aaye
     const params = new URLSearchParams(searchParams.toString());
 
-    // agar key exist karti hai to remove karo
     if (params.has(key)) {
       params.delete(key);
-      const newUrl =
-        params.toString().length > 0
-          ? `${window.location.pathname}?${params.toString()}`
-          : window.location.pathname;
 
-      router.replace(newUrl);
+      const newQuery = params.toString();
+      const newUrl = newQuery ? `${pathname}?${newQuery}` : pathname;
+
+      router.replace(newUrl, { scroll: false });
     }
   };
 

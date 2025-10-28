@@ -32,3 +32,7 @@ export async function fetchProductConfiguration(id: string): Promise<any[]> {
 export async function createTenantApi(tenantData: any): Promise<any> {
   return await ApiService.makePost<any>(`/api/customer/tenants/create`, tenantData);
 }
+
+export async function fetchStorageHelper() {
+  return await ApiService.makeGet(`/api/storage/stats`);
+}

@@ -104,6 +104,7 @@ export interface TenantFormData {
   business_reg_number: string;
   access_code: string;
   subdomain: string;
+  server_id: string;
   time_zone: string;
   status: "active" | "inactive";
 }
