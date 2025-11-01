@@ -12,6 +12,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useRemoveSearchParam } from "@/hooks/useRemoveSearchParams";
 import DynamicConfigForm from "@/components/customer-portal/tenants/ProductConfigurationStep";
 import RowSteps from "@/components/TenantRowStep";
+import { colors } from "@/config/color-scheme";
 
 export default function AddTenantPageInner() {
   const router = useRouter();
@@ -381,20 +382,25 @@ export default function AddTenantPageInner() {
   };
 
   return (
-    <div className="flex flex-col gap-8 p-6 max-w-6xl mx-auto">
+    <div className="flex flex-col gap-8 p-6 max-w-6xl mx-auto" style={{ backgroundColor: colors.background }}>
       <div className="space-y-3 text-center">
         <div className="flex items-center justify-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-teal-600">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full" style={{ background: `linear-gradient(to right, ${colors.primary}, ${colors.secondary})` }}>
             <Icon
               icon="heroicons:building-office"
-              className="h-6 w-6 text-white"
+              className="h-6 w-6"
+              style={{ color: colors.onPrimary }}
             />
           </div>
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+          <h2 className="text-3xl font-bold" style={{ 
+            background: `linear-gradient(to right, ${colors.primary}, ${colors.secondary})`,
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent"
+          }}>
             Add New Tenant
           </h2>
         </div>
-        <p className="text-default-500 text-lg max-w-md mx-auto">
+        <p className="text-lg max-w-md mx-auto" style={{ color: colors.muted }}>
           Create a new tenant organization with the settings below.
         </p>
       </div>
@@ -407,7 +413,11 @@ export default function AddTenantPageInner() {
       />
 
       {submitError && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+        <div className="px-4 py-3 rounded-lg" style={{ 
+          backgroundColor: `${colors.error}20`,
+          border: `1px solid ${colors.error}`,
+          color: colors.error
+        }}>
           <div className="flex items-center">
             <Icon icon="heroicons:x-circle" className="h-5 w-5 mr-2" />
             <span>{submitError}</span>
@@ -415,7 +425,15 @@ export default function AddTenantPageInner() {
         </div>
       )}
 
-      <Card className="p-6 bg-card text-card-foreground">
+      <Card 
+        className="p-6"
+        style={{ 
+          backgroundColor: colors.card,
+          borderColor: colors.border,
+          border: `1px solid ${colors.border}`,
+          boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+        }}
+      >
         {renderStep()}
         <div className="flex justify-between mt-6">
           {currentStep === 0 ? (
@@ -423,6 +441,10 @@ export default function AddTenantPageInner() {
               variant="bordered"
               onClick={() => router.back()}
               disabled={isSubmitting}
+              style={{ 
+                borderColor: colors.border,
+                color: colors.onCard
+              }}
             >
               Cancel
             </Button>
@@ -432,6 +454,10 @@ export default function AddTenantPageInner() {
               className={`${currentStep === 0 ? "cursor-not-allowed" : ""} ${currentStep === 0 && "hidden"}`}
               onClick={handleBack}
               disabled={isSubmitting}
+              style={{ 
+                borderColor: colors.border,
+                color: colors.onCard
+              }}
             >
               Back
             </Button>
@@ -445,6 +471,10 @@ export default function AddTenantPageInner() {
               onClick={handleNext}
               isLoading={isSubmitting}
               disabled={isSubmitting || isFormEmpty}
+              style={{ 
+                backgroundColor: colors.primary,
+                color: colors.onPrimary
+              }}
             >
               Next
             </Button>
@@ -454,21 +484,22 @@ export default function AddTenantPageInner() {
 
       {/* Progress Modal */}
       {showProgress && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-          <div className="bg-white rounded-xl p-8 max-w-md w-full mx-4 transform transition-all duration-300 scale-100 animate-in fade-in-90 zoom-in-90">
+        <div className="fixed inset-0 flex items-center justify-center z-50" style={{ backgroundColor: `${colors.background}CC` }}>
+          <div className="rounded-xl p-8 max-w-md w-full mx-4 transform transition-all duration-300 scale-100 animate-in fade-in-90 zoom-in-90" style={{ backgroundColor: colors.card }}>
             <div className="text-center">
               <div className="flex justify-center mb-6">
-                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 animate-pulse">
+                <div className="flex items-center justify-center w-16 h-16 rounded-full animate-pulse" style={{ backgroundColor: `${colors.primary}20` }}>
                   <Icon
                     icon="heroicons:arrow-path"
-                    className="h-8 w-8 text-blue-600 animate-spin"
+                    className="h-8 w-8 animate-spin"
+                    style={{ color: colors.primary }}
                   />
                 </div>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+              <h3 className="text-2xl font-bold mb-2" style={{ color: colors.onCard }}>
                 Creating Tenant
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="mb-6" style={{ color: colors.muted }}>
                 Please wait while we set up your tenant organization. This may
                 take a few moments.
               </p>
@@ -484,7 +515,7 @@ export default function AddTenantPageInner() {
                 />
               </div>
 
-              <p className="text-sm text-gray-500 mt-4">
+              <p className="text-sm mt-4" style={{ color: colors.muted }}>
                 {progress < 30 && "Initializing tenant configuration..."}
                 {progress >= 30 &&
                   progress < 60 &&
@@ -501,48 +532,52 @@ export default function AddTenantPageInner() {
 
       {/* Success Modal */}
       {showSuccess && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-          <div className="bg-white rounded-xl p-8 max-w-md w-full mx-4 transform transition-all duration-300 scale-100 animate-in fade-in-90 zoom-in-90">
+        <div className="fixed inset-0 flex items-center justify-center z-50" style={{ backgroundColor: `${colors.background}CC` }}>
+          <div className="rounded-xl p-8 max-w-md w-full mx-4 transform transition-all duration-300 scale-100 animate-in fade-in-90 zoom-in-90" style={{ backgroundColor: colors.card }}>
             <div className="text-center">
               <div className="flex justify-center mb-4">
-                <div className="flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-r from-green-400 to-emerald-500">
+                <div className="flex items-center justify-center w-20 h-20 rounded-full" style={{ background: `linear-gradient(to right, ${colors.tertiary}, ${colors.success})` }}>
                   <Icon
                     icon="heroicons:check-circle"
-                    className="h-10 w-10 text-white"
+                    className="h-10 w-10"
+                    style={{ color: colors.onPrimary }}
                   />
                 </div>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+              <h3 className="text-2xl font-bold mb-2" style={{ color: colors.onCard }}>
                 Tenant Created Successfully!
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="mb-6" style={{ color: colors.muted }}>
                 Your new tenant{" "}
-                <span className="font-semibold text-emerald-600">
+                <span className="font-semibold" style={{ color: colors.tertiary }}>
                   {data.name}
                 </span>{" "}
                 has been created and is now active.
               </p>
 
-              <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-6 mb-6 text-left border border-green-200">
+              <div className="rounded-lg p-6 mb-6 text-left border" style={{ 
+                backgroundColor: `${colors.success}10`,
+                borderColor: colors.success
+              }}>
                 <div className="flex justify-between mb-3">
-                  <span className="text-gray-600">Tenant Name:</span>
-                  <span className="font-medium">{data.name}</span>
+                  <span style={{ color: colors.muted }}>Tenant Name:</span>
+                  <span className="font-medium" style={{ color: colors.onCard }}>{data.name}</span>
                 </div>
                 <div className="flex justify-between mb-3">
-                  <span className="text-gray-600">Domain:</span>
-                  <span className="font-medium">{data.subdomain}</span>
+                  <span style={{ color: colors.muted }}>Domain:</span>
+                  <span className="font-medium" style={{ color: colors.onCard }}>{data.subdomain}</span>
                 </div>
                 <div className="flex justify-between mb-3">
-                  <span className="text-gray-600">Product:</span>
-                  <span className="font-medium">
+                  <span style={{ color: colors.muted }}>Product:</span>
+                  <span className="font-medium" style={{ color: colors.onCard }}>
                     {products.find((p) => p.id === selectedProductId)?.name ||
                       "Selected Product"}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Status:</span>
-                  <span className="font-medium text-green-600 flex items-center gap-1">
-                    <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                  <span style={{ color: colors.muted }}>Status:</span>
+                  <span className="font-medium flex items-center gap-1" style={{ color: colors.success }}>
+                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: colors.success }}></span>
                     Active
                   </span>
                 </div>
@@ -561,6 +596,10 @@ export default function AddTenantPageInner() {
                     setProductConfigData({});
                     setCurrentStep(0);
                   }}
+                  style={{ 
+                    borderColor: colors.border,
+                    color: colors.onCard
+                  }}
                 >
                   Create Another
                 </Button>
@@ -570,6 +609,10 @@ export default function AddTenantPageInner() {
                   onClick={() => {
                     setShowSuccess(false);
                     router.push("/dashboard/tenants");
+                  }}
+                  style={{ 
+                    backgroundColor: colors.primary,
+                    color: colors.onPrimary
                   }}
                 >
                   Go to Dashboard

@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import toast from "react-hot-toast";
+import { colors } from "@/config/color-scheme";
 
 interface InvoiceLineFormProps {
   invoiceHeaderId: string;
@@ -50,7 +51,10 @@ export function InvoiceLineForm({
 
   const getCurrentUser = async () => {
     try {
-      const { data: { user }, error } = await supabase.auth.getUser();
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
       if (error) throw error;
       if (user) {
         setCurrentUserId(user.id);
@@ -68,7 +72,7 @@ export function InvoiceLineForm({
         .from("products")
         .select("product_id, product_name")
         .eq("is_active", true);
-      
+
       if (error) throw error;
       setProducts(data || []);
     } catch (error: any) {
@@ -83,7 +87,7 @@ export function InvoiceLineForm({
         .from("tenants")
         .select("id, name")
         .eq("is_active", true);
-      
+
       if (error) throw error;
       setTenants(data || []);
     } catch (error: any) {
@@ -95,7 +99,8 @@ export function InvoiceLineForm({
     const { name, value, type } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "number" ? (value === "" ? 0 : parseFloat(value)) : value,
+      [name]:
+        type === "number" ? (value === "" ? 0 : parseFloat(value)) : value,
     }));
   };
 
@@ -170,20 +175,27 @@ export function InvoiceLineForm({
   };
 
   return (
-    <div className="p-6 space-y-4">
-      <h2 className="text-xl font-semibold">
+    <div className="p-6 space-y-4" style={{ backgroundColor: colors.card }}>
+      <h2 className="text-xl font-semibold" style={{ color: colors.onCard }}>
         {editingLine ? "Edit Line Item" : "Add Line Item"}
       </h2>
 
       <div className="space-y-2">
-        <Label>Product</Label>
+        <Label style={{ color: colors.onCard }}>Product</Label>
         <Select
           value={formData.product_id || ""}
           onValueChange={(val) =>
             setFormData({ ...formData, product_id: val === "none" ? "" : val })
           }
         >
-          <SelectTrigger>
+          <SelectTrigger
+            style={{
+              backgroundColor: colors.surface,
+              borderColor: colors.border,
+              color: colors.onCard,
+              border: `1px solid ${colors.border}`,
+            }}
+          >
             <SelectValue placeholder="Select Product (Optional)" />
           </SelectTrigger>
           <SelectContent>
@@ -198,14 +210,21 @@ export function InvoiceLineForm({
       </div>
 
       <div className="space-y-2">
-        <Label>Tenant</Label>
+        <Label style={{ color: colors.onCard }}>Tenant</Label>
         <Select
           value={formData.tenant_id || ""}
           onValueChange={(val) =>
             setFormData({ ...formData, tenant_id: val === "none" ? "" : val })
           }
         >
-          <SelectTrigger>
+          <SelectTrigger
+            style={{
+              backgroundColor: colors.surface,
+              borderColor: colors.border,
+              color: colors.onCard,
+              border: `1px solid ${colors.border}`,
+            }}
+          >
             <SelectValue placeholder="Select Tenant (Optional)" />
           </SelectTrigger>
           <SelectContent>
@@ -220,25 +239,36 @@ export function InvoiceLineForm({
       </div>
 
       <div className="space-y-2">
-        <Label>Quantity</Label>
+        <Label style={{ color: colors.onCard }}>Quantity</Label>
         <Input
           type="number"
           name="quantity"
           min="1"
           value={formData.quantity || 1}
           onChange={handleChange}
+          style={{
+            backgroundColor: colors.surface,
+            borderColor: colors.border,
+            color: colors.onCard,
+            border: `1px solid ${colors.border}`,
+          }}
         />
       </div>
 
       <div className="space-y-2">
-        <Label>Currency</Label>
+        <Label style={{ color: colors.onCard }}>Currency</Label>
         <Select
           value={formData.currency}
-          onValueChange={(val) =>
-            setFormData({ ...formData, currency: val })
-          }
+          onValueChange={(val) => setFormData({ ...formData, currency: val })}
         >
-          <SelectTrigger>
+          <SelectTrigger
+            style={{
+              backgroundColor: colors.surface,
+              borderColor: colors.border,
+              color: colors.onCard,
+              border: `1px solid ${colors.border}`,
+            }}
+          >
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -253,7 +283,7 @@ export function InvoiceLineForm({
       </div>
 
       <div className="space-y-2">
-        <Label>Subtotal</Label>
+        <Label style={{ color: colors.onCard }}>Subtotal</Label>
         <Input
           type="number"
           name="line_subtotal"
@@ -262,11 +292,17 @@ export function InvoiceLineForm({
           value={formData.line_subtotal || ""}
           onChange={handleChange}
           placeholder="0.00"
+          style={{
+            backgroundColor: colors.surface,
+            borderColor: colors.border,
+            color: colors.onCard,
+            border: `1px solid ${colors.border}`,
+          }}
         />
       </div>
 
       <div className="space-y-2">
-        <Label>Discount</Label>
+        <Label style={{ color: colors.onCard }}>Discount</Label>
         <Input
           type="number"
           name="line_discount"
@@ -275,11 +311,17 @@ export function InvoiceLineForm({
           value={formData.line_discount || ""}
           onChange={handleChange}
           placeholder="0.00"
+          style={{
+            backgroundColor: colors.surface,
+            borderColor: colors.border,
+            color: colors.onCard,
+            border: `1px solid ${colors.border}`,
+          }}
         />
       </div>
 
       <div className="space-y-2">
-        <Label>Tax</Label>
+        <Label style={{ color: colors.onCard }}>Tax</Label>
         <Input
           type="number"
           name="line_tax"
@@ -288,11 +330,17 @@ export function InvoiceLineForm({
           value={formData.line_tax || ""}
           onChange={handleChange}
           placeholder="0.00"
+          style={{
+            backgroundColor: colors.surface,
+            borderColor: colors.border,
+            color: colors.onCard,
+            border: `1px solid ${colors.border}`,
+          }}
         />
       </div>
 
       <div className="space-y-2">
-        <Label>Total</Label>
+        <Label style={{ color: colors.onCard }}>Total</Label>
         <Input
           type="number"
           name="line_total"
@@ -301,18 +349,42 @@ export function InvoiceLineForm({
           value={formData.line_total || ""}
           onChange={handleChange}
           placeholder="0.00"
+          style={{
+            backgroundColor: colors.surface,
+            borderColor: colors.border,
+            color: colors.onCard,
+            border: `1px solid ${colors.border}`,
+          }}
         />
       </div>
 
       <div className="flex justify-end gap-2 pt-4">
-        <Button variant="outline" onClick={onClose}>
+        <Button
+          variant="outline"
+          onClick={onClose}
+          style={{
+            backgroundColor: colors.surface,
+            borderColor: colors.border,
+            color: colors.onCard,
+            border: `1px solid ${colors.border}`,
+          }}
+        >
           Cancel
         </Button>
-        <Button onClick={handleSubmit} disabled={loading || !currentUserId}>
+        <Button
+          onClick={handleSubmit}
+          disabled={loading || !currentUserId}
+          style={{
+            backgroundColor: colors.primary,
+            color: colors.onPrimary,
+          }}
+        >
           {loading ? "Saving..." : "Save"}
         </Button>
         {!currentUserId && (
-          <p className="text-sm text-red-500 mt-2">Please log in to continue</p>
+          <p className="text-sm mt-2" style={{ color: colors.error }}>
+            Please log in to continue
+          </p>
         )}
       </div>
     </div>

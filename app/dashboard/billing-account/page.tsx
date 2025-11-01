@@ -21,6 +21,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { colors } from "@/config/color-scheme";
 
 interface AccountData {
   id: string;
@@ -175,13 +176,30 @@ const App = () => {
   };
 
   return (
-    <div className="bg-gray-50 flex min-h-screen items-center justify-center p-4 sm:p-6 lg:p-8">
-      <Card className="w-full max-w-full rounded-xl shadow-lg">
+    <div 
+      className="flex min-h-screen items-center justify-center p-4 sm:p-6 lg:p-8"
+      style={{ backgroundColor: colors.background }}
+    >
+      <Card 
+        className="w-full max-w-full rounded-xl shadow-lg"
+        style={{ 
+          backgroundColor: colors.card,
+          borderColor: colors.border,
+          border: `1px solid ${colors.border}`,
+          boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+        }}
+      >
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">
+          <CardTitle 
+            className="text-2xl font-bold text-center"
+            style={{ color: colors.onCard }}
+          >
             Billing Account Management
           </CardTitle>
-          <CardDescription className="text-center">
+          <CardDescription 
+            className="text-center"
+            style={{ color: colors.muted }}
+          >
             Update your billing and company information for your account.
           </CardDescription>
         </CardHeader>
@@ -189,10 +207,20 @@ const App = () => {
           <div className="space-y-8">
             {/* Basic Information */}
             <div>
-              <h3 className="text-lg font-semibold mb-4">Basic Information</h3>
+              <h3 
+                className="text-lg font-semibold mb-4"
+                style={{ color: colors.onCard }}
+              >
+                Basic Information
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="billingEmail">Billing Email *</Label>
+                  <Label 
+                    htmlFor="billingEmail"
+                    style={{ color: colors.onCard }}
+                  >
+                    Billing Email *
+                  </Label>
                   <Input
                     id="billingEmail"
                     type="email"
@@ -200,16 +228,33 @@ const App = () => {
                     onChange={handleChange}
                     placeholder="name@example.com"
                     required
+                    style={{ 
+                      backgroundColor: colors.surface,
+                      borderColor: colors.border,
+                      color: colors.onCard,
+                      border: `1px solid ${colors.border}`,
+                    }}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="billingName">Billing Name *</Label>
+                  <Label 
+                    htmlFor="billingName"
+                    style={{ color: colors.onCard }}
+                  >
+                    Billing Name *
+                  </Label>
                   <Input
                     id="billingName"
                     value={formData.billingName}
                     onChange={handleChange}
                     placeholder="Jane Doe"
                     required
+                    style={{ 
+                      backgroundColor: colors.surface,
+                      borderColor: colors.border,
+                      color: colors.onCard,
+                      border: `1px solid ${colors.border}`,
+                    }}
                   />
                 </div>
               </div>
@@ -217,35 +262,75 @@ const App = () => {
 
             {/* Company Information */}
             <div>
-              <h3 className="text-lg font-semibold mb-4">Company Information</h3>
+              <h3 
+                className="text-lg font-semibold mb-4"
+                style={{ color: colors.onCard }}
+              >
+                Company Information
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="companyName">Company Name</Label>
+                  <Label 
+                    htmlFor="companyName"
+                    style={{ color: colors.onCard }}
+                  >
+                    Company Name
+                  </Label>
                   <Input
                     id="companyName"
                     value={formData.companyName || ""}
                     onChange={handleChange}
                     placeholder="Acme Inc."
+                    style={{ 
+                      backgroundColor: colors.surface,
+                      borderColor: colors.border,
+                      color: colors.onCard,
+                      border: `1px solid ${colors.border}`,
+                    }}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="taxId">Tax ID</Label>
+                  <Label 
+                    htmlFor="taxId"
+                    style={{ color: colors.onCard }}
+                  >
+                    Tax ID
+                  </Label>
                   <Input
                     id="taxId"
                     value={formData.taxId || ""}
                     onChange={handleChange}
                     placeholder="e.g., US123456789"
+                    style={{ 
+                      backgroundColor: colors.surface,
+                      borderColor: colors.border,
+                      color: colors.onCard,
+                      border: `1px solid ${colors.border}`,
+                    }}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="companySize">Company Size</Label>
+                  <Label 
+                    htmlFor="companySize"
+                    style={{ color: colors.onCard }}
+                  >
+                    Company Size
+                  </Label>
                   <Select
                     value={formData.companySize || ""}
                     onValueChange={(value) =>
                       handleSelectChange("companySize", value)
                     }
                   >
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger 
+                      className="w-full"
+                      style={{ 
+                        backgroundColor: colors.surface,
+                        borderColor: colors.border,
+                        color: colors.onCard,
+                        border: `1px solid ${colors.border}`,
+                      }}
+                    >
                       <SelectValue placeholder="Select company size" />
                     </SelectTrigger>
                     <SelectContent>
@@ -258,14 +343,27 @@ const App = () => {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="industry">Industry</Label>
+                  <Label 
+                    htmlFor="industry"
+                    style={{ color: colors.onCard }}
+                  >
+                    Industry
+                  </Label>
                   <Select
                     value={formData.industry || ""}
                     onValueChange={(value) =>
                       handleSelectChange("industry", value)
                     }
                   >
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger 
+                      className="w-full"
+                      style={{ 
+                        backgroundColor: colors.surface,
+                        borderColor: colors.border,
+                        color: colors.onCard,
+                        border: `1px solid ${colors.border}`,
+                      }}
+                    >
                       <SelectValue placeholder="Select industry" />
                     </SelectTrigger>
                     <SelectContent>
@@ -280,69 +378,142 @@ const App = () => {
               </div>
             </div>
 
-            <Separator />
+            <Separator style={{ backgroundColor: colors.border }} />
 
             {/* Billing Address */}
             <div>
-              <h3 className="text-lg font-semibold mb-4">Billing Address</h3>
+              <h3 
+                className="text-lg font-semibold mb-4"
+                style={{ color: colors.onCard }}
+              >
+                Billing Address
+              </h3>
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="billingAddressLine1">Address Line 1</Label>
+                  <Label 
+                    htmlFor="billingAddressLine1"
+                    style={{ color: colors.onCard }}
+                  >
+                    Address Line 1
+                  </Label>
                   <Input
                     id="billingAddressLine1"
                     value={formData.billingAddressLine1 || ""}
                     onChange={handleChange}
                     placeholder="123 Main St"
+                    style={{ 
+                      backgroundColor: colors.surface,
+                      borderColor: colors.border,
+                      color: colors.onCard,
+                      border: `1px solid ${colors.border}`,
+                    }}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="billingAddressLine2">Address Line 2</Label>
+                  <Label 
+                    htmlFor="billingAddressLine2"
+                    style={{ color: colors.onCard }}
+                  >
+                    Address Line 2
+                  </Label>
                   <Input
                     id="billingAddressLine2"
                     value={formData.billingAddressLine2 || ""}
                     onChange={handleChange}
                     placeholder="Apt, suite, etc."
+                    style={{ 
+                      backgroundColor: colors.surface,
+                      borderColor: colors.border,
+                      color: colors.onCard,
+                      border: `1px solid ${colors.border}`,
+                    }}
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="billingCity">City</Label>
+                    <Label 
+                      htmlFor="billingCity"
+                      style={{ color: colors.onCard }}
+                    >
+                      City
+                    </Label>
                     <Input
                       id="billingCity"
                       value={formData.billingCity || ""}
                       onChange={handleChange}
                       placeholder="Anytown"
+                      style={{ 
+                        backgroundColor: colors.surface,
+                        borderColor: colors.border,
+                        color: colors.onCard,
+                        border: `1px solid ${colors.border}`,
+                      }}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="billingState">State/Province</Label>
+                    <Label 
+                      htmlFor="billingState"
+                      style={{ color: colors.onCard }}
+                    >
+                      State/Province
+                    </Label>
                     <Input
                       id="billingState"
                       value={formData.billingState || ""}
                       onChange={handleChange}
                       placeholder="CA"
+                      style={{ 
+                        backgroundColor: colors.surface,
+                        borderColor: colors.border,
+                        color: colors.onCard,
+                        border: `1px solid ${colors.border}`,
+                      }}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="billingPostalCode">Postal Code</Label>
+                    <Label 
+                      htmlFor="billingPostalCode"
+                      style={{ color: colors.onCard }}
+                    >
+                      Postal Code
+                    </Label>
                     <Input
                       id="billingPostalCode"
                       value={formData.billingPostalCode || ""}
                       onChange={handleChange}
                       placeholder="12345"
+                      style={{ 
+                        backgroundColor: colors.surface,
+                        borderColor: colors.border,
+                        color: colors.onCard,
+                        border: `1px solid ${colors.border}`,
+                      }}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="billingCountry">Country</Label>
+                    <Label 
+                      htmlFor="billingCountry"
+                      style={{ color: colors.onCard }}
+                    >
+                      Country
+                    </Label>
                     <Select
                       value={formData.billingCountry || "US"}
                       onValueChange={(value) =>
                         handleSelectChange("billingCountry", value)
                       }
                     >
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger 
+                        className="w-full"
+                        style={{ 
+                          backgroundColor: colors.surface,
+                          borderColor: colors.border,
+                          color: colors.onCard,
+                          border: `1px solid ${colors.border}`,
+                        }}
+                      >
                         <SelectValue placeholder="Select a country" />
                       </SelectTrigger>
                       <SelectContent>
@@ -358,21 +529,39 @@ const App = () => {
               </div>
             </div>
 
-            <Separator />
+            <Separator style={{ backgroundColor: colors.border }} />
 
             {/* Payment & Billing Settings */}
             <div>
-              <h3 className="text-lg font-semibold mb-4">Payment & Billing</h3>
+              <h3 
+                className="text-lg font-semibold mb-4"
+                style={{ color: colors.onCard }}
+              >
+                Payment & Billing
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="paymentMethod">Payment Method</Label>
+                  <Label 
+                    htmlFor="paymentMethod"
+                    style={{ color: colors.onCard }}
+                  >
+                    Payment Method
+                  </Label>
                   <Select
                     value={formData.paymentMethod || ""}
                     onValueChange={(value) =>
                       handleSelectChange("paymentMethod", value)
                     }
                   >
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger 
+                      className="w-full"
+                      style={{ 
+                        backgroundColor: colors.surface,
+                        borderColor: colors.border,
+                        color: colors.onCard,
+                        border: `1px solid ${colors.border}`,
+                      }}
+                    >
                       <SelectValue placeholder="Select payment method" />
                     </SelectTrigger>
                     <SelectContent>
@@ -385,7 +574,12 @@ const App = () => {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="gracePeriodDays">Grace Period (Days)</Label>
+                  <Label 
+                    htmlFor="gracePeriodDays"
+                    style={{ color: colors.onCard }}
+                  >
+                    Grace Period (Days)
+                  </Label>
                   <Input
                     id="gracePeriodDays"
                     type="number"
@@ -394,30 +588,62 @@ const App = () => {
                     value={formData.gracePeriodDays || ""}
                     onChange={handleChange}
                     placeholder="7"
+                    style={{ 
+                      backgroundColor: colors.surface,
+                      borderColor: colors.border,
+                      color: colors.onCard,
+                      border: `1px solid ${colors.border}`,
+                    }}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="stripeCustomerId">Stripe Customer ID</Label>
+                  <Label 
+                    htmlFor="stripeCustomerId"
+                    style={{ color: colors.onCard }}
+                  >
+                    Stripe Customer ID
+                  </Label>
                   <Input
                     id="stripeCustomerId"
                     value={formData.stripeCustomerId || ""}
                     onChange={handleChange}
                     placeholder="cus_1234567890"
                     disabled
-                    className="bg-gray-100"
+                    style={{ 
+                      backgroundColor: colors.surface,
+                      borderColor: colors.border,
+                      color: colors.muted,
+                      border: `1px solid ${colors.border}`,
+                    }}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="paymentProcessorId">Payment Processor ID</Label>
+                  <Label 
+                    htmlFor="paymentProcessorId"
+                    style={{ color: colors.onCard }}
+                  >
+                    Payment Processor ID
+                  </Label>
                   <Input
                     id="paymentProcessorId"
                     value={formData.paymentProcessorId || ""}
                     onChange={handleChange}
                     placeholder="pp_1234567890"
+                    style={{ 
+                      backgroundColor: colors.surface,
+                      borderColor: colors.border,
+                      color: colors.onCard,
+                      border: `1px solid ${colors.border}`,
+                    }}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="accountBalance">Account Balance</Label>
+                  <Label 
+                    htmlFor="accountBalance"
+                    style={{ color: colors.onCard }}
+                  >
+                    Account Balance
+                  </Label>
                   <Input
                     id="accountBalance"
                     type="number"
@@ -426,27 +652,50 @@ const App = () => {
                     onChange={handleChange}
                     placeholder="0.00"
                     disabled
-                    className="bg-gray-100"
+                    style={{ 
+                      backgroundColor: colors.surface,
+                      borderColor: colors.border,
+                      color: colors.muted,
+                      border: `1px solid ${colors.border}`,
+                    }}
                   />
                 </div>
               </div>
             </div>
 
-            <Separator />
+            <Separator style={{ backgroundColor: colors.border }} />
 
             {/* Preferences */}
             <div>
-              <h3 className="text-lg font-semibold mb-4">Preferences</h3>
+              <h3 
+                className="text-lg font-semibold mb-4"
+                style={{ color: colors.onCard }}
+              >
+                Preferences
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="preferredCurrency">Preferred Currency</Label>
+                  <Label 
+                    htmlFor="preferredCurrency"
+                    style={{ color: colors.onCard }}
+                  >
+                    Preferred Currency
+                  </Label>
                   <Select
                     value={formData.preferredCurrency || "USD"}
                     onValueChange={(value) =>
                       handleSelectChange("preferredCurrency", value)
                     }
                   >
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger 
+                      className="w-full"
+                      style={{ 
+                        backgroundColor: colors.surface,
+                        borderColor: colors.border,
+                        color: colors.onCard,
+                        border: `1px solid ${colors.border}`,
+                      }}
+                    >
                       <SelectValue placeholder="Select currency" />
                     </SelectTrigger>
                     <SelectContent>
@@ -459,14 +708,27 @@ const App = () => {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="timezone">Timezone</Label>
+                  <Label 
+                    htmlFor="timezone"
+                    style={{ color: colors.onCard }}
+                  >
+                    Timezone
+                  </Label>
                   <Select
                     value={formData.timezone || "UTC"}
                     onValueChange={(value) =>
                       handleSelectChange("timezone", value)
                     }
                   >
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger 
+                      className="w-full"
+                      style={{ 
+                        backgroundColor: colors.surface,
+                        borderColor: colors.border,
+                        color: colors.onCard,
+                        border: `1px solid ${colors.border}`,
+                      }}
+                    >
                       <SelectValue placeholder="Select timezone" />
                     </SelectTrigger>
                     <SelectContent>
@@ -481,11 +743,16 @@ const App = () => {
               </div>
             </div>
 
-            <Separator />
+            <Separator style={{ backgroundColor: colors.border }} />
 
             {/* Account Settings */}
             <div>
-              <h3 className="text-lg font-semibold mb-4">Account Settings</h3>
+              <h3 
+                className="text-lg font-semibold mb-4"
+                style={{ color: colors.onCard }}
+              >
+                Account Settings
+              </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="flex items-center space-x-2">
                   <Switch
@@ -495,7 +762,11 @@ const App = () => {
                       setFormData((prev) => ({ ...prev, autoBilling: checked }))
                     }
                   />
-                  <Label htmlFor="auto-billing" className="!mt-0">
+                  <Label 
+                    htmlFor="auto-billing" 
+                    className="!mt-0"
+                    style={{ color: colors.onCard }}
+                  >
                     Enable auto-billing
                   </Label>
                 </div>
@@ -510,7 +781,11 @@ const App = () => {
                       }))
                     }
                   />
-                  <Label htmlFor="is-active" className="!mt-0">
+                  <Label 
+                    htmlFor="is-active" 
+                    className="!mt-0"
+                    style={{ color: colors.onCard }}
+                  >
                     Account is active
                   </Label>
                 </div>
@@ -519,42 +794,87 @@ const App = () => {
 
             {/* Read-only Fields */}
             <div>
-              <h3 className="text-lg font-semibold mb-4">System Information</h3>
+              <h3 
+                className="text-lg font-semibold mb-4"
+                style={{ color: colors.onCard }}
+              >
+                System Information
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="createdBy">Created By</Label>
+                  <Label 
+                    htmlFor="createdBy"
+                    style={{ color: colors.onCard }}
+                  >
+                    Created By
+                  </Label>
                   <Input
                     id="createdBy"
                     value={formData.createdBy || ""}
                     disabled
-                    className="bg-gray-100"
+                    style={{ 
+                      backgroundColor: colors.surface,
+                      borderColor: colors.border,
+                      color: colors.muted,
+                      border: `1px solid ${colors.border}`,
+                    }}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="createdAt">Created At</Label>
+                  <Label 
+                    htmlFor="createdAt"
+                    style={{ color: colors.onCard }}
+                  >
+                    Created At
+                  </Label>
                   <Input
                     id="createdAt"
                     value={new Date(formData.createdAt).toLocaleString()}
                     disabled
-                    className="bg-gray-100"
+                    style={{ 
+                      backgroundColor: colors.surface,
+                      borderColor: colors.border,
+                      color: colors.muted,
+                      border: `1px solid ${colors.border}`,
+                    }}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="modifiedBy">Modified By</Label>
+                  <Label 
+                    htmlFor="modifiedBy"
+                    style={{ color: colors.onCard }}
+                  >
+                    Modified By
+                  </Label>
                   <Input
                     id="modifiedBy"
                     value={formData.modifiedBy || "N/A"}
                     disabled
-                    className="bg-gray-100"
+                    style={{ 
+                      backgroundColor: colors.surface,
+                      borderColor: colors.border,
+                      color: colors.muted,
+                      border: `1px solid ${colors.border}`,
+                    }}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="modifiedAt">Modified At</Label>
+                  <Label 
+                    htmlFor="modifiedAt"
+                    style={{ color: colors.onCard }}
+                  >
+                    Modified At
+                  </Label>
                   <Input
                     id="modifiedAt"
                     value={formData.modifiedAt ? new Date(formData.modifiedAt).toLocaleString() : "N/A"}
                     disabled
-                    className="bg-gray-100"
+                    style={{ 
+                      backgroundColor: colors.surface,
+                      borderColor: colors.border,
+                      color: colors.muted,
+                      border: `1px solid ${colors.border}`,
+                    }}
                   />
                 </div>
               </div>
@@ -562,10 +882,20 @@ const App = () => {
           </div>
         </CardContent>
         <CardFooter className="flex justify-between pt-6">
-          <div className="text-sm text-gray-500">
+          <div 
+            className="text-sm"
+            style={{ color: colors.muted }}
+          >
             Account ID: {formData.id}
           </div>
-          <Button onClick={handleSave} disabled={isLoading}>
+          <Button 
+            onClick={handleSave} 
+            disabled={isLoading}
+            style={{ 
+              backgroundColor: colors.primary,
+              color: colors.onPrimary
+            }}
+          >
             {isLoading ? "Saving..." : "Save Changes"}
           </Button>
         </CardFooter>

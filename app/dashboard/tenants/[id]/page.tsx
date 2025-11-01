@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import {
@@ -15,6 +15,7 @@ import {
 } from "chart.js";
 import { Bar, Line, Doughnut } from "react-chartjs-2";
 import { supabase } from "@/lib/supabase";
+import { colors } from "@/config/color-scheme";
 
 ChartJS.register(
   CategoryScale,
@@ -159,8 +160,8 @@ export default function TenantChartsPage() {
         {
           label: "Activity Score",
           data: activityData,
-          borderColor: tenant.is_active ? "rgb(75, 192, 192)" : "rgb(255, 99, 132)",
-          backgroundColor: tenant.is_active ? "rgba(75, 192, 192, 0.2)" : "rgba(255, 99, 132, 0.2)",
+          borderColor: tenant.is_active ? colors.tertiary : colors.error,
+          backgroundColor: tenant.is_active ? `${colors.tertiary}33` : `${colors.error}33`,
           tension: 0.1,
         },
       ],
@@ -187,12 +188,12 @@ export default function TenantChartsPage() {
         {
           data: [completed, pending],
           backgroundColor: [
-            'rgba(75, 192, 192, 0.8)',
-            'rgba(255, 159, 64, 0.8)',
+            `${colors.tertiary}CC`,
+            `${colors.warning}CC`,
           ],
           borderColor: [
-            'rgba(75, 192, 192, 1)',
-            'rgba(255, 159, 64, 1)',
+            colors.tertiary,
+            colors.warning,
           ],
           borderWidth: 2,
         },
@@ -205,7 +206,11 @@ export default function TenantChartsPage() {
     if (!similarTenants.length || !tenant) return null;
 
     const allTenants = [tenant, ...similarTenants.slice(0, 4)]; // Include current + 4 similar
-    const labels = allTenants.map(t => t.name.substring(0, 15) + (t.name.length > 15 ? '...' : ''));
+    const labels = allTenants.map(t => {
+      // Add null check for tenant name
+      if (!t.name) return "Unknown Tenant";
+      return t.name.length > 15 ? `${t.name.substring(0, 15)}...` : t.name;
+    });
     
     const daysActiveData = allTenants.map(t => {
       const days = Math.floor((new Date().getTime() - new Date(t.created_at).getTime()) / (1000 * 60 * 60 * 24));
@@ -219,10 +224,10 @@ export default function TenantChartsPage() {
           label: "Days Active",
           data: daysActiveData,
           backgroundColor: allTenants.map((t, i) => 
-            i === 0 ? "rgba(54, 162, 235, 0.8)" : "rgba(153, 102, 255, 0.5)"
+            i === 0 ? `${colors.primary}CC` : `${colors.secondary}80`
           ),
           borderColor: allTenants.map((t, i) => 
-            i === 0 ? "rgba(54, 162, 235, 1)" : "rgba(153, 102, 255, 1)"
+            i === 0 ? colors.primary : colors.secondary
           ),
           borderWidth: allTenants.map((t, i) => i === 0 ? 3 : 1),
         },
@@ -235,30 +240,57 @@ export default function TenantChartsPage() {
     plugins: {
       legend: {
         position: "top" as const,
+        labels: {
+          color: colors.onCard,
+        }
       },
+      title: {
+        color: colors.onCard,
+        font: {
+          size: 16,
+        }
+      }
     },
+    scales: {
+      y: {
+        ticks: {
+          color: colors.muted,
+        },
+        grid: {
+          color: `${colors.border}33`,
+        }
+      },
+      x: {
+        ticks: {
+          color: colors.muted,
+        },
+        grid: {
+          color: `${colors.border}33`,
+        }
+      }
+    }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl">Loading tenant data...</div>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: colors.background }}>
+        <div className="text-xl" style={{ color: colors.onBackground }}>Loading tenant data...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl text-red-500">{error}</div>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: colors.background }}>
+        <div className="text-xl" style={{ color: colors.error }}>{error}</div>
       </div>
     );
   }
 
   if (!tenant || !metrics) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl">Tenant not found</div>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: colors.background }}>
+        <div className="text-xl" style={{ color: colors.onBackground }}>Tenant not found</div>
       </div>
     );
   }
@@ -267,29 +299,40 @@ export default function TenantChartsPage() {
   const configStatusData = getConfigurationStatusData();
   const comparisonData = getSimilarTenantsData();
 
+  // Helper function to safely truncate strings
+  const safeTruncate = (str: string | undefined | null, length: number) => {
+    if (!str) return "N/A";
+    return str.length > length ? `${str.substring(0, length)}...` : str;
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen p-6" style={{ backgroundColor: colors.background }}>
       <div className="max-w-full mx-auto">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold" style={{ color: colors.onBackground }}>
                 {tenant.name}
               </h1>
-              <p className="text-gray-600 mt-2">
+              <p className="mt-2" style={{ color: colors.muted }}>
                 Individual tenant analytics and insights
               </p>
             </div>
             <div className="text-right">
               <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
                 tenant.is_active 
-                  ? 'bg-green-100 text-green-800' 
-                  : 'bg-red-100 text-red-800'
-              }`}>
+                  ? '' 
+                  : ''
+              }`} style={{ 
+                backgroundColor: tenant.is_active ? `${colors.success}20` : `${colors.error}20`,
+                color: tenant.is_active ? colors.success : colors.error
+              }}>
                 <div className={`w-2 h-2 rounded-full mr-2 ${
-                  tenant.is_active ? 'bg-green-500' : 'bg-red-500'
-                }`}></div>
+                  tenant.is_active ? '' : ''
+                }`} style={{ 
+                  backgroundColor: tenant.is_active ? colors.success : colors.error 
+                }}></div>
                 {metrics.statusCategory.toUpperCase()}
               </div>
             </div>
@@ -297,60 +340,104 @@ export default function TenantChartsPage() {
         </div>
 
         {/* Tenant Details Card */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div 
+          className="rounded-lg shadow-md p-6 mb-8"
+          style={{ 
+            backgroundColor: colors.card,
+            borderColor: colors.border,
+            border: `1px solid ${colors.border}`,
+            boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+          }}
+        >
           <div className="flex items-start justify-between">
             <div className="flex items-center">
               <div>
-                <h2 className="text-xl font-semibold">{tenant.name}</h2>
-                <p className="text-gray-600 mt-1">Access Code: {tenant.access_code}</p>
-                <p className="text-sm text-gray-500 mt-2">
+                <h2 className="text-xl font-semibold" style={{ color: colors.onCard }}>{tenant.name}</h2>
+                <p className="mt-1" style={{ color: colors.muted }}>Access Code: {tenant.access_code}</p>
+                <p className="text-sm mt-2" style={{ color: colors.muted }}>
                   Created {metrics.daysActive} days ago • {tenant.time_zone}
                 </p>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-sm text-gray-500">Domain</p>
-              <p className="font-medium">{tenant.sub_domain || "Not configured"}</p>
-              <p className="text-sm text-gray-500 mt-2">Business Reg</p>
-              <p className="font-medium">{tenant.business_reg_number || "Not provided"}</p>
+              <p className="text-sm" style={{ color: colors.muted }}>Domain</p>
+              <p className="font-medium" style={{ color: colors.onCard }}>{tenant.sub_domain || "Not configured"}</p>
+              <p className="text-sm mt-2" style={{ color: colors.muted }}>Business Reg</p>
+              <p className="font-medium" style={{ color: colors.onCard }}>{tenant.business_reg_number || "Not provided"}</p>
             </div>
           </div>
         </div>
 
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg font-medium text-gray-900">Days Active</h3>
-            <p className="text-3xl font-bold text-blue-600 mt-2">{metrics.daysActive}</p>
-            <p className="text-sm text-gray-500 mt-1">
+          <div 
+            className="rounded-lg shadow-md p-6"
+            style={{ 
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+              border: `1px solid ${colors.border}`,
+              boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+            }}
+          >
+            <h3 className="text-lg font-medium" style={{ color: colors.onCard }}>Days Active</h3>
+            <p className="text-3xl font-bold mt-2" style={{ color: colors.primary }}>{metrics.daysActive}</p>
+            <p className="text-sm mt-1" style={{ color: colors.muted }}>
               {metrics.isRecent ? 'Recent signup' : 'Established tenant'}
             </p>
           </div>
           
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg font-medium text-gray-900">Configuration</h3>
+          <div 
+            className="rounded-lg shadow-md p-6"
+            style={{ 
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+              border: `1px solid ${colors.border}`,
+              boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+            }}
+          >
+            <h3 className="text-lg font-medium" style={{ color: colors.onCard }}>Configuration</h3>
             <p className={`text-3xl font-bold mt-2 ${
-              metrics.schemaReady ? 'text-green-600' : 'text-orange-600'
-            }`}>
+              metrics.schemaReady ? '' : ''
+            }`} style={{ 
+              color: metrics.schemaReady ? colors.tertiary : colors.warning 
+            }}>
               {metrics.schemaReady ? 'Ready' : 'Pending'}
             </p>
-            <p className="text-sm text-gray-500 mt-1">Schema status</p>
+            <p className="text-sm mt-1" style={{ color: colors.muted }}>Schema status</p>
           </div>
           
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg font-medium text-gray-900">Domain Setup</h3>
+          <div 
+            className="rounded-lg shadow-md p-6"
+            style={{ 
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+              border: `1px solid ${colors.border}`,
+              boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+            }}
+          >
+            <h3 className="text-lg font-medium" style={{ color: colors.onCard }}>Domain Setup</h3>
             <p className={`text-3xl font-bold mt-2 ${
-              metrics.hasCustomDomain ? 'text-green-600' : 'text-gray-400'
-            }`}>
+              metrics.hasCustomDomain ? '' : ''
+            }`} style={{ 
+              color: metrics.hasCustomDomain ? colors.tertiary : colors.muted 
+            }}>
               {metrics.hasCustomDomain ? 'Yes' : 'No'}
             </p>
-            <p className="text-sm text-gray-500 mt-1">Custom domain configured</p>
+            <p className="text-sm mt-1" style={{ color: colors.muted }}>Custom domain configured</p>
           </div>
           
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg font-medium text-gray-900">Similar Tenants</h3>
-            <p className="text-3xl font-bold text-purple-600 mt-2">{similarTenants.length}</p>
-            <p className="text-sm text-gray-500 mt-1">Same timezone/status</p>
+          <div 
+            className="rounded-lg shadow-md p-6"
+            style={{ 
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+              border: `1px solid ${colors.border}`,
+              boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+            }}
+          >
+            <h3 className="text-lg font-medium" style={{ color: colors.onCard }}>Similar Tenants</h3>
+            <p className="text-3xl font-bold mt-2" style={{ color: colors.secondary }}>{similarTenants.length}</p>
+            <p className="text-sm mt-1" style={{ color: colors.muted }}>Same timezone/status</p>
           </div>
         </div>
 
@@ -358,8 +445,16 @@ export default function TenantChartsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Activity Timeline */}
           {activityData && (
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold mb-4">Activity Timeline</h2>
+            <div 
+              className="rounded-lg shadow-md p-6"
+              style={{ 
+                backgroundColor: colors.card,
+                borderColor: colors.border,
+                border: `1px solid ${colors.border}`,
+                boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+              }}
+            >
+              <h2 className="text-xl font-semibold mb-4" style={{ color: colors.onCard }}>Activity Timeline</h2>
               <Line
                 options={{
                   ...chartOptions,
@@ -389,8 +484,16 @@ export default function TenantChartsPage() {
 
           {/* Configuration Status */}
           {configStatusData && (
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold mb-4">Setup Completion</h2>
+            <div 
+              className="rounded-lg shadow-md p-6"
+              style={{ 
+                backgroundColor: colors.card,
+                borderColor: colors.border,
+                border: `1px solid ${colors.border}`,
+                boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+              }}
+            >
+              <h2 className="text-xl font-semibold mb-4" style={{ color: colors.onCard }}>Setup Completion</h2>
               <div className="h-64 flex items-center justify-center">
                 <Doughnut
                   options={{
@@ -399,6 +502,9 @@ export default function TenantChartsPage() {
                     plugins: {
                       legend: {
                         position: "bottom" as const,
+                        labels: {
+                          color: colors.onCard,
+                        }
                       },
                     },
                   }}
@@ -411,8 +517,16 @@ export default function TenantChartsPage() {
 
         {/* Comparison with Similar Tenants */}
         {comparisonData && (
-          <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-            <h2 className="text-xl font-semibold mb-4">Comparison with Similar Tenants</h2>
+          <div 
+            className="rounded-lg shadow-md p-6 mb-8"
+            style={{ 
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+              border: `1px solid ${colors.border}`,
+              boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+            }}
+          >
+            <h2 className="text-xl font-semibold mb-4" style={{ color: colors.onCard }}>Comparison with Similar Tenants</h2>
             <Bar
               options={{
                 ...chartOptions,
@@ -431,34 +545,50 @@ export default function TenantChartsPage() {
 
         {/* Detailed Information */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Technical Details</h3>
+          <div 
+            className="rounded-lg shadow-md p-6"
+            style={{ 
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+              border: `1px solid ${colors.border}`,
+              boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+            }}
+          >
+            <h3 className="text-lg font-medium mb-4" style={{ color: colors.onCard }}>Technical Details</h3>
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-gray-600">Tenant ID</span>
-                <span className="font-mono text-sm text-gray-800">{tenant.id.substring(0, 8)}...</span>
+                <span style={{ color: colors.muted }}>Tenant ID</span>
+                <span className="font-mono text-sm" style={{ color: colors.onCard }}>{safeTruncate(tenant.id, 8)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Server ID</span>
-                <span className="font-mono text-sm text-gray-800">{tenant.server_id.substring(0, 8)}...</span>
+                <span style={{ color: colors.muted }}>Server ID</span>
+                <span className="font-mono text-sm" style={{ color: colors.onCard }}>{safeTruncate(tenant.server_id, 8)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Product ID</span>
-                <span className="font-mono text-sm text-gray-800">{tenant.product_id.substring(0, 8)}...</span>
+                <span style={{ color: colors.muted }}>Product ID</span>
+                <span className="font-mono text-sm" style={{ color: colors.onCard }}>{safeTruncate(tenant.product_id, 8)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Schema Name</span>
-                <span className="font-medium text-gray-800">{tenant.schema || 'Not assigned'}</span>
+                <span style={{ color: colors.muted }}>Schema Name</span>
+                <span className="font-medium" style={{ color: colors.onCard }}>{tenant.schema || 'Not assigned'}</span>
               </div>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Timeline</h3>
+          <div 
+            className="rounded-lg shadow-md p-6"
+            style={{ 
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+              border: `1px solid ${colors.border}`,
+              boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+            }}
+          >
+            <h3 className="text-lg font-medium mb-4" style={{ color: colors.onCard }}>Timeline</h3>
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-gray-600">Created</span>
-                <span className="font-medium text-gray-800">
+                <span style={{ color: colors.muted }}>Created</span>
+                <span className="font-medium" style={{ color: colors.onCard }}>
                   {new Date(tenant.created_at).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',
@@ -467,8 +597,8 @@ export default function TenantChartsPage() {
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Last Updated</span>
-                <span className="font-medium text-gray-800">
+                <span style={{ color: colors.muted }}>Last Updated</span>
+                <span className="font-medium" style={{ color: colors.onCard }}>
                   {new Date(tenant.updated_at).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'short',
@@ -477,8 +607,8 @@ export default function TenantChartsPage() {
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Age Category</span>
-                <span className="font-medium text-gray-800">
+                <span style={{ color: colors.muted }}>Age Category</span>
+                <span className="font-medium" style={{ color: colors.onCard }}>
                   {metrics.daysActive < 7 ? 'New' : 
                    metrics.daysActive < 30 ? 'Recent' : 
                    metrics.daysActive < 90 ? 'Established' : 'Veteran'}

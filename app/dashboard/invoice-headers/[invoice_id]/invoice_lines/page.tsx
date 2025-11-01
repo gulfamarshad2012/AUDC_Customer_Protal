@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { ArrowLeft, Package, Building } from "lucide-react";
+import { colors } from "@/config/color-scheme";
 
 interface InvoiceHeader {
   invoice_id: string;
@@ -165,24 +166,83 @@ export default function InvoiceDetailsPage() {
 
     switch (status.toLowerCase()) {
       case "paid":
-        return <Badge className="bg-green-100 text-green-800">Paid</Badge>;
+        return (
+          <Badge
+            className="bg-green-100 text-green-800"
+            style={{
+              backgroundColor: `${colors.success}20`,
+              color: colors.success,
+            }}
+          >
+            Paid
+          </Badge>
+        );
       case "pending":
-        return <Badge className="bg-yellow-100 text-yellow-800">Pending</Badge>;
+        return (
+          <Badge
+            className="bg-yellow-100 text-yellow-800"
+            style={{
+              backgroundColor: `${colors.warning}20`,
+              color: colors.warning,
+            }}
+          >
+            Pending
+          </Badge>
+        );
       case "overdue":
-        return <Badge className="bg-red-100 text-red-800">Overdue</Badge>;
+        return (
+          <Badge
+            className="bg-red-100 text-red-800"
+            style={{
+              backgroundColor: `${colors.error}20`,
+              color: colors.error,
+            }}
+          >
+            Overdue
+          </Badge>
+        );
       case "cancelled":
-        return <Badge variant="destructive">Cancelled</Badge>;
+        return (
+          <Badge
+            variant="destructive"
+            style={{
+              backgroundColor: `${colors.error}20`,
+              color: colors.error,
+            }}
+          >
+            Cancelled
+          </Badge>
+        );
       default:
-        return <Badge variant="outline">{status}</Badge>;
+        return (
+          <Badge
+            variant="outline"
+            style={{
+              backgroundColor: colors.surface,
+              color: colors.onCard,
+              borderColor: colors.border,
+            }}
+          >
+            {status}
+          </Badge>
+        );
     }
   };
 
   if (loading) {
     return (
-      <div className="container mx-auto py-10 flex justify-center items-center">
+      <div
+        className="container mx-auto py-10 flex justify-center items-center"
+        style={{ backgroundColor: colors.background }}
+      >
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-lg">Loading invoice details...</p>
+          <div
+            className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto"
+            style={{ borderColor: colors.primary }}
+          ></div>
+          <p className="mt-4 text-lg" style={{ color: colors.onBackground }}>
+            Loading invoice details...
+          </p>
         </div>
       </div>
     );
@@ -190,14 +250,33 @@ export default function InvoiceDetailsPage() {
 
   if (error || !invoice) {
     return (
-      <div className="container mx-auto py-10">
-        <Card>
+      <div
+        className="container mx-auto py-10"
+        style={{ backgroundColor: colors.background }}
+      >
+        <Card
+          style={{
+            backgroundColor: colors.card,
+            borderColor: colors.border,
+            border: `1px solid ${colors.border}`,
+            boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+          }}
+        >
           <CardHeader>
-            <CardTitle>Error</CardTitle>
+            <CardTitle style={{ color: colors.onCard }}>Error</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-red-500">{error || "Invoice not found"}</p>
-            <Button className="mt-4" onClick={() => router.push("/dashboard/invoice-headers")}>
+            <p style={{ color: colors.error }}>
+              {error || "Invoice not found"}
+            </p>
+            <Button
+              className="mt-4"
+              onClick={() => router.push("/dashboard/invoice-headers")}
+              style={{
+                backgroundColor: colors.primary,
+                color: colors.onPrimary,
+              }}
+            >
               Back to Invoices
             </Button>
           </CardContent>
@@ -207,12 +286,21 @@ export default function InvoiceDetailsPage() {
   }
 
   return (
-    <div className="container max-w-full mx-auto py-10">
+    <div
+      className="container max-w-full mx-auto py-10"
+      style={{ backgroundColor: colors.background }}
+    >
       <div className="mb-6">
         <Button
           variant="outline"
           onClick={() => router.push("/dashboard/invoice-headers")}
           className="mb-4"
+          style={{
+            backgroundColor: colors.surface,
+            borderColor: colors.border,
+            color: colors.onCard,
+            border: `1px solid ${colors.border}`,
+          }}
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Invoices
@@ -220,27 +308,48 @@ export default function InvoiceDetailsPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        <Card>
+        <Card
+          style={{
+            backgroundColor: colors.card,
+            borderColor: colors.border,
+            border: `1px solid ${colors.border}`,
+            boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+          }}
+        >
           <CardHeader>
-            <CardTitle>Invoice Details</CardTitle>
+            <CardTitle style={{ color: colors.onCard }}>
+              Invoice Details
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               <div>
-                <p className="text-sm text-muted-foreground">Invoice ID</p>
-                <p className="font-medium">{invoice.invoice_id}</p>
+                <p className="text-sm" style={{ color: colors.muted }}>
+                  Invoice ID
+                </p>
+                <p className="font-medium" style={{ color: colors.onCard }}>
+                  {invoice.invoice_id}
+                </p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Status</p>
+                <p className="text-sm" style={{ color: colors.muted }}>
+                  Status
+                </p>
                 {getStatusBadge(invoice.status)}
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Billing Cycle</p>
-                <p className="font-medium">{invoice.billing_cycle || "N/A"}</p>
+                <p className="text-sm" style={{ color: colors.muted }}>
+                  Billing Cycle
+                </p>
+                <p className="font-medium" style={{ color: colors.onCard }}>
+                  {invoice.billing_cycle || "N/A"}
+                </p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Period</p>
-                <p className="font-medium">
+                <p className="text-sm" style={{ color: colors.muted }}>
+                  Period
+                </p>
+                <p className="font-medium" style={{ color: colors.onCard }}>
                   {invoice.start_date && invoice.end_date
                     ? `${formatDate(invoice.start_date)} - ${formatDate(invoice.end_date)}`
                     : "N/A"}
@@ -250,15 +359,26 @@ export default function InvoiceDetailsPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card
+          style={{
+            backgroundColor: colors.card,
+            borderColor: colors.border,
+            border: `1px solid ${colors.border}`,
+            boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+          }}
+        >
           <CardHeader>
-            <CardTitle>Payment Information</CardTitle>
+            <CardTitle style={{ color: colors.onCard }}>
+              Payment Information
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               <div>
-                <p className="text-sm text-muted-foreground">Subtotal</p>
-                <p className="font-medium">
+                <p className="text-sm" style={{ color: colors.muted }}>
+                  Subtotal
+                </p>
+                <p className="font-medium" style={{ color: colors.onCard }}>
                   {formatCurrency(
                     invoice.subtotal_amount,
                     invoice.currency || "USD"
@@ -266,8 +386,10 @@ export default function InvoiceDetailsPage() {
                 </p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Discount</p>
-                <p className="font-medium">
+                <p className="text-sm" style={{ color: colors.muted }}>
+                  Discount
+                </p>
+                <p className="font-medium" style={{ color: colors.onCard }}>
                   {formatCurrency(
                     invoice.discount_amount,
                     invoice.currency || "USD"
@@ -275,8 +397,10 @@ export default function InvoiceDetailsPage() {
                 </p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Tax</p>
-                <p className="font-medium">
+                <p className="text-sm" style={{ color: colors.muted }}>
+                  Tax
+                </p>
+                <p className="font-medium" style={{ color: colors.onCard }}>
                   {formatCurrency(
                     invoice.tax_amount,
                     invoice.currency || "USD"
@@ -284,8 +408,13 @@ export default function InvoiceDetailsPage() {
                 </p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Total</p>
-                <p className="font-medium text-lg">
+                <p className="text-sm" style={{ color: colors.muted }}>
+                  Total
+                </p>
+                <p
+                  className="font-medium text-lg"
+                  style={{ color: colors.primary }}
+                >
                   {formatCurrency(
                     invoice.total_amount,
                     invoice.currency || "USD"
@@ -296,79 +425,160 @@ export default function InvoiceDetailsPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card
+          style={{
+            backgroundColor: colors.card,
+            borderColor: colors.border,
+            border: `1px solid ${colors.border}`,
+            boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+          }}
+        >
           <CardHeader>
-            <CardTitle>Additional Information</CardTitle>
+            <CardTitle style={{ color: colors.onCard }}>
+              Additional Information
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               <div>
-                <p className="text-sm text-muted-foreground">Account ID</p>
-                <p className="font-medium">
+                <p className="text-sm" style={{ color: colors.muted }}>
+                  Account ID
+                </p>
+                <p className="font-medium" style={{ color: colors.onCard }}>
                   {invoice.account_id
                     ? invoice.account_id.substring(0, 8) + "..."
                     : "N/A"}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Failed Payments</p>
-                <p className="font-medium">
+                <p className="text-sm" style={{ color: colors.muted }}>
+                  Failed Payments
+                </p>
+                <p className="font-medium" style={{ color: colors.onCard }}>
                   {invoice.failed_payment_count || 0}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Created</p>
-                <p className="font-medium">{formatDate(invoice.created_at)}</p>
+                <p className="text-sm" style={{ color: colors.muted }}>
+                  Created
+                </p>
+                <p className="font-medium" style={{ color: colors.onCard }}>
+                  {formatDate(invoice.created_at)}
+                </p>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <Card>
+      <Card
+        style={{
+          backgroundColor: colors.card,
+          borderColor: colors.border,
+          border: `1px solid ${colors.border}`,
+          boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+        }}
+      >
         <CardHeader>
-          <CardTitle>Invoice Lines</CardTitle>
-          <CardDescription>
+          <CardTitle style={{ color: colors.onCard }}>Invoice Lines</CardTitle>
+          <CardDescription style={{ color: colors.muted }}>
             Detailed breakdown of products and services in this invoice
           </CardDescription>
         </CardHeader>
         <CardContent>
           {invoiceLines.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-muted-foreground">No invoice lines found</p>
+              <p style={{ color: colors.muted }}>No invoice lines found</p>
             </div>
           ) : (
-            <div className="rounded-md border">
+            <div
+              className="rounded-md border overflow-hidden"
+              style={{
+                backgroundColor: colors.card,
+                borderColor: colors.border,
+                border: `1px solid ${colors.border}`,
+              }}
+            >
               <Table>
-                <TableCaption>
+                <TableCaption style={{ color: colors.muted }}>
                   {invoiceLines.length} line items in this invoice
                 </TableCaption>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[50px]">#</TableHead>
-                    <TableHead>Product</TableHead>
-                    <TableHead>Tenant</TableHead>
-                    <TableHead className="text-right">Quantity</TableHead>
-                    <TableHead className="text-right">Unit Price</TableHead>
-                    <TableHead className="text-right">Discount</TableHead>
-                    <TableHead className="text-right">Tax</TableHead>
-                    <TableHead className="text-right">Total</TableHead>
+                  <TableRow style={{ backgroundColor: colors.primaryLight }}>
+                    <TableHead
+                      className="w-[50px]"
+                      style={{ color: colors.onPrimaryLight }}
+                    >
+                      #
+                    </TableHead>
+                    <TableHead style={{ color: colors.onPrimaryLight }}>
+                      Product
+                    </TableHead>
+                    <TableHead style={{ color: colors.onPrimaryLight }}>
+                      Tenant
+                    </TableHead>
+                    <TableHead
+                      className="text-right"
+                      style={{ color: colors.onPrimaryLight }}
+                    >
+                      Quantity
+                    </TableHead>
+                    <TableHead
+                      className="text-right"
+                      style={{ color: colors.onPrimaryLight }}
+                    >
+                      Unit Price
+                    </TableHead>
+                    <TableHead
+                      className="text-right"
+                      style={{ color: colors.onPrimaryLight }}
+                    >
+                      Discount
+                    </TableHead>
+                    <TableHead
+                      className="text-right"
+                      style={{ color: colors.onPrimaryLight }}
+                    >
+                      Tax
+                    </TableHead>
+                    <TableHead
+                      className="text-right"
+                      style={{ color: colors.onPrimaryLight }}
+                    >
+                      Total
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {invoiceLines.map((line) => (
-                    <TableRow key={line.invoice_line_id}>
+                  {invoiceLines.map((line, index) => (
+                    <TableRow
+                      key={line.invoice_line_id}
+                      style={{
+                        backgroundColor:
+                          index % 2 === 0 ? colors.card : colors.surface,
+                        color: colors.onCard,
+                      }}
+                    >
                       <TableCell className="font-medium">
                         {line.line_number || "-"}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center">
-                          <Package className="h-4 w-4 mr-2 text-muted-foreground" />
+                          <Package
+                            className="h-4 w-4 mr-2"
+                            style={{ color: colors.muted }}
+                          />
                           <div>
-                            <p className="font-medium">
+                            <p
+                              className="font-medium"
+                              style={{ color: colors.onCard }}
+                            >
                               {line.product?.product_name || "Unknown Product"}
                             </p>
-                            <p className="text-sm text-muted-foreground">
+                            <p
+                              className="text-sm"
+                              style={{ color: colors.muted }}
+                            >
                               {line.product?.plan_name || "N/A"}
                             </p>
                           </div>
@@ -376,39 +586,63 @@ export default function InvoiceDetailsPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center">
-                          <Building className="h-4 w-4 mr-2 text-muted-foreground" />
+                          <Building
+                            className="h-4 w-4 mr-2"
+                            style={{ color: colors.muted }}
+                          />
                           <div>
-                            <p className="font-medium">
+                            <p
+                              className="font-medium"
+                              style={{ color: colors.onCard }}
+                            >
                               {line.tenant?.name || "Unknown Tenant"}
                             </p>
-                            <p className="text-sm text-muted-foreground">
+                            <p
+                              className="text-sm"
+                              style={{ color: colors.muted }}
+                            >
                               {line.tenant?.domain || "N/A"}
                             </p>
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell
+                        className="text-right"
+                        style={{ color: colors.onCard }}
+                      >
                         {line.quantity || 0}
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell
+                        className="text-right"
+                        style={{ color: colors.onCard }}
+                      >
                         {formatCurrency(
                           line.product?.monthly_price || 0,
                           line.currency || "USD"
                         )}
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell
+                        className="text-right"
+                        style={{ color: colors.onCard }}
+                      >
                         {formatCurrency(
                           line.line_discount || 0,
                           line.currency || "USD"
                         )}
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell
+                        className="text-right"
+                        style={{ color: colors.onCard }}
+                      >
                         {formatCurrency(
                           line.line_tax || 0,
                           line.currency || "USD"
                         )}
                       </TableCell>
-                      <TableCell className="text-right font-medium">
+                      <TableCell
+                        className="text-right font-medium"
+                        style={{ color: colors.primary }}
+                      >
                         {formatCurrency(
                           line.line_total || 0,
                           line.currency || "USD"

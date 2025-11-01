@@ -1,4 +1,3 @@
-// app/billing/page.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -31,6 +30,7 @@ import {
 } from "@/components/ui/select";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { ChevronDown, ChevronRight, Package, Building } from "lucide-react";
+import { colors } from "@/config/color-scheme";
 
 interface InvoiceHeader {
   invoice_id: string;
@@ -213,26 +213,87 @@ export default function BillingHistoryPage() {
 
     switch (status.toLowerCase()) {
       case "paid":
-        return <Badge className="bg-green-100 text-green-800">Paid</Badge>;
+        return (
+          <Badge 
+            className="bg-green-100 text-green-800"
+            style={{ 
+              backgroundColor: `${colors.success}20`,
+              color: colors.success
+            }}
+          >
+            Paid
+          </Badge>
+        );
       case "pending":
-        return <Badge className="bg-yellow-100 text-yellow-800">Pending</Badge>;
+        return (
+          <Badge 
+            className="bg-yellow-100 text-yellow-800"
+            style={{ 
+              backgroundColor: `${colors.warning}20`,
+              color: colors.warning
+            }}
+          >
+            Pending
+          </Badge>
+        );
       case "overdue":
-        return <Badge className="bg-red-100 text-red-800">Overdue</Badge>;
+        return (
+          <Badge 
+            className="bg-red-100 text-red-800"
+            style={{ 
+              backgroundColor: `${colors.error}20`,
+              color: colors.error
+            }}
+          >
+            Overdue
+          </Badge>
+        );
       case "cancelled":
-        return <Badge variant="destructive">Cancelled</Badge>;
+        return (
+          <Badge 
+            variant="destructive"
+            style={{ 
+              backgroundColor: `${colors.error}20`,
+              color: colors.error
+            }}
+          >
+            Cancelled
+          </Badge>
+        );
       default:
-        return <Badge variant="outline">{status}</Badge>;
+        return (
+          <Badge 
+            variant="outline"
+            style={{ 
+              backgroundColor: colors.surface,
+              color: colors.onCard,
+              borderColor: colors.border
+            }}
+          >
+            {status}
+          </Badge>
+        );
     }
   };
 
   const totalPages = Math.ceil(filteredInvoices.length / itemsPerPage);
 
   return (
-    <div className="container mx-auto py-10">
-      <Card>
+    <div 
+      className="container mx-auto py-10"
+      style={{ backgroundColor: colors.background }}
+    >
+      <Card 
+        style={{ 
+          backgroundColor: colors.card,
+          borderColor: colors.border,
+          border: `1px solid ${colors.border}`,
+          boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+        }}
+      >
         <CardHeader>
-          <CardTitle>Billing History</CardTitle>
-          <CardDescription>
+          <CardTitle style={{ color: colors.onCard }}>Billing History</CardTitle>
+          <CardDescription style={{ color: colors.muted }}>
             View and manage all your invoices and payment history
           </CardDescription>
         </CardHeader>
@@ -244,9 +305,23 @@ export default function BillingHistoryPage() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full md:w-64"
+                style={{ 
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  color: colors.onCard,
+                  border: `1px solid ${colors.border}`,
+                }}
               />
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-full md:w-40">
+                <SelectTrigger 
+                  className="w-full md:w-40"
+                  style={{ 
+                    backgroundColor: colors.surface,
+                    borderColor: colors.border,
+                    color: colors.onCard,
+                    border: `1px solid ${colors.border}`,
+                  }}
+                >
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -258,51 +333,75 @@ export default function BillingHistoryPage() {
                 </SelectContent>
               </Select>
             </div>
-            <Button onClick={fetchInvoices} disabled={loading}>
+            <Button 
+              onClick={fetchInvoices} 
+              disabled={loading}
+              style={{ 
+                backgroundColor: colors.primary,
+                color: colors.onPrimary
+              }}
+            >
               {loading ? "Refreshing..." : "Refresh Data"}
             </Button>
           </div>
 
           {error && (
-            <div className="bg-red-50 text-red-800 p-4 rounded-md mb-6">
+            <div 
+              className="p-4 rounded-md mb-6"
+              style={{ 
+                backgroundColor: `${colors.error}20`,
+                color: colors.error,
+                border: `1px solid ${colors.error}`
+              }}
+            >
               Error: {error}
             </div>
           )}
 
-          <div className="rounded-md border">
+          <div 
+            className="rounded-md border overflow-hidden"
+            style={{ 
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+              border: `1px solid ${colors.border}`,
+            }}
+          >
             <Table>
-              <TableCaption>
+              <TableCaption style={{ color: colors.muted }}>
                 {filteredInvoices.length === 0
                   ? "No invoices found"
                   : `Showing ${filteredInvoices.length} invoices`}
               </TableCaption>
               <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[50px]"></TableHead>
-                  <TableHead>Invoice ID</TableHead>
-                  <TableHead>Billing Cycle</TableHead>
-                  <TableHead>Period</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Subtotal</TableHead>
-                  <TableHead className="text-right">Discount</TableHead>
-                  <TableHead className="text-right">Tax</TableHead>
-                  <TableHead className="text-right">Total</TableHead>
-                  <TableHead>Created</TableHead>
+                <TableRow style={{ backgroundColor: colors.primaryLight }}>
+                  <TableHead className="w-[50px]" style={{ color: colors.onPrimaryLight }}></TableHead>
+                  <TableHead style={{ color: colors.onPrimaryLight }}>Invoice ID</TableHead>
+                  <TableHead style={{ color: colors.onPrimaryLight }}>Billing Cycle</TableHead>
+                  <TableHead style={{ color: colors.onPrimaryLight }}>Period</TableHead>
+                  <TableHead style={{ color: colors.onPrimaryLight }}>Status</TableHead>
+                  <TableHead className="text-right" style={{ color: colors.onPrimaryLight }}>Subtotal</TableHead>
+                  <TableHead className="text-right" style={{ color: colors.onPrimaryLight }}>Discount</TableHead>
+                  <TableHead className="text-right" style={{ color: colors.onPrimaryLight }}>Tax</TableHead>
+                  <TableHead className="text-right" style={{ color: colors.onPrimaryLight }}>Total</TableHead>
+                  <TableHead style={{ color: colors.onPrimaryLight }}>Created</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredInvoices.map((invoice) => (
-                  // Use React.Fragment with a unique key for the entire invoice row group
+                {filteredInvoices.map((invoice, index) => (
                   <React.Fragment key={invoice.invoice_id}>
                     <TableRow
-                      className="cursor-pointer hover:bg-muted/50"
+                      className="cursor-pointer"
                       onClick={() => toggleRowExpansion(invoice.invoice_id)}
+                      style={{ 
+                        backgroundColor: index % 2 === 0 ? colors.card : colors.surface,
+                        color: colors.onCard
+                      }}
                     >
                       <TableCell>
                         {expandedRows[invoice.invoice_id] ? (
-                          <ChevronDown className="h-4 w-4" />
+                          <ChevronDown className="h-4 w-4" style={{ color: colors.onCard }} />
                         ) : (
-                          <ChevronRight className="h-4 w-4" />
+                          <ChevronRight className="h-4 w-4" style={{ color: colors.onCard }} />
                         )}
                       </TableCell>
                       <TableCell className="font-medium">
@@ -344,41 +443,71 @@ export default function BillingHistoryPage() {
                     {expandedRows[invoice.invoice_id] && (
                       <TableRow key={`${invoice.invoice_id}-expanded`}>
                         <TableCell colSpan={10} className="p-0">
-                          <div className="p-4 bg-muted/20">
-                            <h4 className="font-medium mb-3">Invoice Lines</h4>
+                          <div 
+                            className="p-4"
+                            style={{ backgroundColor: colors.surface }}
+                          >
+                            <h4 
+                              className="font-medium mb-3"
+                              style={{ color: colors.onCard }}
+                            >
+                              Invoice Lines
+                            </h4>
                             {loadingLines[invoice.invoice_id] ? (
                               <div className="flex justify-center py-4">
-                                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                                <div 
+                                  className="animate-spin rounded-full h-6 w-6 border-b-2"
+                                  style={{ borderColor: colors.primary }}
+                                ></div>
                               </div>
                             ) : invoiceLines[invoice.invoice_id]?.length ? (
-                              <div className="rounded-md border">
+                              <div 
+                                className="rounded-md border overflow-hidden"
+                                style={{ 
+                                  backgroundColor: colors.card,
+                                  borderColor: colors.border,
+                                  border: `1px solid ${colors.border}`,
+                                }}
+                              >
                                 <Table>
                                   <TableHeader>
-                                    <TableRow>
-                                      <TableHead className="w-[50px]">#</TableHead>
-                                      <TableHead>Product</TableHead>
-                                      <TableHead>Tenant</TableHead>
-                                      <TableHead className="text-right">Quantity</TableHead>
-                                      <TableHead className="text-right">Unit Price</TableHead>
-                                      <TableHead className="text-right">Discount</TableHead>
-                                      <TableHead className="text-right">Tax</TableHead>
-                                      <TableHead className="text-right">Total</TableHead>
+                                    <TableRow style={{ backgroundColor: colors.primaryLight }}>
+                                      <TableHead className="w-[50px]" style={{ color: colors.onPrimaryLight }}>#</TableHead>
+                                      <TableHead style={{ color: colors.onPrimaryLight }}>Product</TableHead>
+                                      <TableHead style={{ color: colors.onPrimaryLight }}>Tenant</TableHead>
+                                      <TableHead className="text-right" style={{ color: colors.onPrimaryLight }}>Quantity</TableHead>
+                                      <TableHead className="text-right" style={{ color: colors.onPrimaryLight }}>Unit Price</TableHead>
+                                      <TableHead className="text-right" style={{ color: colors.onPrimaryLight }}>Discount</TableHead>
+                                      <TableHead className="text-right" style={{ color: colors.onPrimaryLight }}>Tax</TableHead>
+                                      <TableHead className="text-right" style={{ color: colors.onPrimaryLight }}>Total</TableHead>
                                     </TableRow>
                                   </TableHeader>
                                   <TableBody>
-                                    {invoiceLines[invoice.invoice_id].map((line) => (
-                                      <TableRow key={line.invoice_line_id}>
+                                    {invoiceLines[invoice.invoice_id].map((line, lineIndex) => (
+                                      <TableRow 
+                                        key={line.invoice_line_id}
+                                        style={{ 
+                                          backgroundColor: lineIndex % 2 === 0 ? colors.card : colors.surface,
+                                          color: colors.onCard
+                                        }}
+                                      >
                                         <TableCell className="font-medium">
                                           {line.line_number || "-"}
                                         </TableCell>
                                         <TableCell>
                                           <div className="flex items-center">
-                                            <Package className="h-4 w-4 mr-2 text-muted-foreground" />
+                                            <Package 
+                                              className="h-4 w-4 mr-2" 
+                                              style={{ color: colors.muted }}
+                                            />
                                             <div>
                                               <p className="font-medium">
                                                 {line.product?.product_name || "Unknown Product"}
                                               </p>
-                                              <p className="text-sm text-muted-foreground">
+                                              <p 
+                                                className="text-sm"
+                                                style={{ color: colors.muted }}
+                                              >
                                                 {line.product?.plan_name || "N/A"}
                                               </p>
                                             </div>
@@ -386,12 +515,18 @@ export default function BillingHistoryPage() {
                                         </TableCell>
                                         <TableCell>
                                           <div className="flex items-center">
-                                            <Building className="h-4 w-4 mr-2 text-muted-foreground" />
+                                            <Building 
+                                              className="h-4 w-4 mr-2" 
+                                              style={{ color: colors.muted }}
+                                            />
                                             <div>
                                               <p className="font-medium">
                                                 {line.tenant?.name || "Unknown Tenant"}
                                               </p>
-                                              <p className="text-sm text-muted-foreground">
+                                              <p 
+                                                className="text-sm"
+                                                style={{ color: colors.muted }}
+                                              >
                                                 {line.tenant?.domain || "N/A"}
                                               </p>
                                             </div>
@@ -431,7 +566,7 @@ export default function BillingHistoryPage() {
                               </div>
                             ) : (
                               <div className="text-center py-4">
-                                <p className="text-muted-foreground">No invoice lines found</p>
+                                <p style={{ color: colors.muted }}>No invoice lines found</p>
                               </div>
                             )}
                           </div>
@@ -446,7 +581,10 @@ export default function BillingHistoryPage() {
 
           {totalPages > 1 && (
             <div className="flex items-center justify-between space-x-2 py-4">
-              <div className="text-sm text-muted-foreground">
+              <div 
+                className="text-sm"
+                style={{ color: colors.muted }}
+              >
                 Page {currentPage} of {totalPages}
               </div>
               <div className="flex space-x-2">
@@ -457,6 +595,12 @@ export default function BillingHistoryPage() {
                     setCurrentPage((prev) => Math.max(prev - 1, 1))
                   }
                   disabled={currentPage === 1}
+                  style={{ 
+                    backgroundColor: colors.surface,
+                    borderColor: colors.border,
+                    color: colors.onCard,
+                    border: `1px solid ${colors.border}`,
+                  }}
                 >
                   Previous
                 </Button>
@@ -467,6 +611,12 @@ export default function BillingHistoryPage() {
                     setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                   }
                   disabled={currentPage === totalPages}
+                  style={{ 
+                    backgroundColor: colors.surface,
+                    borderColor: colors.border,
+                    color: colors.onCard,
+                    border: `1px solid ${colors.border}`,
+                  }}
                 >
                   Next
                 </Button>

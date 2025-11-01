@@ -15,6 +15,7 @@ import {
 import { Bar, Line, Doughnut } from "react-chartjs-2";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import { colors } from "@/config/color-scheme";
 
 ChartJS.register(
   CategoryScale,
@@ -172,8 +173,8 @@ export default function AllTenantsAnalytics() {
         {
           label: "New Tenants",
           data,
-          borderColor: "rgb(75, 192, 192)",
-          backgroundColor: "rgba(75, 192, 192, 0.2)",
+          borderColor: colors.primary,
+          backgroundColor: `${colors.primary}33`,
           tension: 0.1,
         },
       ],
@@ -187,12 +188,12 @@ export default function AllTenantsAnalytics() {
     const labels = Object.keys(stats.tenantsByStatus);
     const data = Object.values(stats.tenantsByStatus);
 
-    const colors = [
-      "rgba(75, 192, 192, 0.8)",
-      "rgba(255, 99, 132, 0.8)",
-      "rgba(255, 205, 86, 0.8)",
-      "rgba(54, 162, 235, 0.8)",
-      "rgba(153, 102, 255, 0.8)",
+    const themeColors = [
+      `${colors.tertiary}CC`,
+      `${colors.error}CC`,
+      `${colors.warning}CC`,
+      `${colors.info}CC`,
+      `${colors.secondary}CC`,
     ];
 
     return {
@@ -200,10 +201,10 @@ export default function AllTenantsAnalytics() {
       datasets: [
         {
           data,
-          backgroundColor: colors.slice(0, labels.length),
-          borderColor: colors
+          backgroundColor: themeColors.slice(0, labels.length),
+          borderColor: themeColors
             .slice(0, labels.length)
-            .map((color) => color.replace("0.8", "1")),
+            .map((color) => color.replace("CC", "FF")),
           borderWidth: 2,
         },
       ],
@@ -224,8 +225,8 @@ export default function AllTenantsAnalytics() {
         {
           label: "Tenants",
           data: sortedTimezones.map(([, count]) => count),
-          backgroundColor: "rgba(153, 102, 255, 0.6)",
-          borderColor: "rgba(153, 102, 255, 1)",
+          backgroundColor: `${colors.secondary}99`,
+          borderColor: colors.secondary,
           borderWidth: 1,
         },
       ],
@@ -245,8 +246,8 @@ export default function AllTenantsAnalytics() {
         {
           label: "Tenants per Server",
           data,
-          backgroundColor: "rgba(54, 162, 235, 0.6)",
-          borderColor: "rgba(54, 162, 235, 1)",
+          backgroundColor: `${colors.info}99`,
+          borderColor: colors.info,
           borderWidth: 1,
         },
       ],
@@ -275,22 +276,49 @@ export default function AllTenantsAnalytics() {
     plugins: {
       legend: {
         position: "top" as const,
+        labels: {
+          color: colors.onCard,
+        }
       },
+      title: {
+        color: colors.onCard,
+        font: {
+          size: 16,
+        }
+      }
     },
+    scales: {
+      y: {
+        ticks: {
+          color: colors.muted,
+        },
+        grid: {
+          color: `${colors.border}33`,
+        }
+      },
+      x: {
+        ticks: {
+          color: colors.muted,
+        },
+        grid: {
+          color: `${colors.border}33`,
+        }
+      }
+    }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl">Loading all tenants data...</div>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: colors.background }}>
+        <div className="text-xl" style={{ color: colors.onBackground }}>Loading all tenants data...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl text-red-500">{error}</div>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: colors.background }}>
+        <div className="text-xl" style={{ color: colors.error }}>{error}</div>
       </div>
     );
   }
@@ -301,36 +329,52 @@ export default function AllTenantsAnalytics() {
   const serverData = getServerDistributionData();
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen p-6" style={{ backgroundColor: colors.background }}>
       <div className="max-w-full mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold" style={{ color: colors.onBackground }}>
             All Tenants Analytics Dashboard
           </h1>
-          <p className="text-gray-600 mt-2">
+          <p className="mt-2" style={{ color: colors.muted }}>
             Comprehensive overview of all tenants in the system
           </p>
         </div>
 
         {/* Key Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg font-medium text-gray-900">Total Tenants</h3>
-            <p className="text-3xl font-bold text-blue-600 mt-2">
+          <div 
+            className="rounded-lg shadow-md p-6"
+            style={{ 
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+              border: `1px solid ${colors.border}`,
+              boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+            }}
+          >
+            <h3 className="text-lg font-medium" style={{ color: colors.onCard }}>Total Tenants</h3>
+            <p className="text-3xl font-bold mt-2" style={{ color: colors.primary }}>
               {stats?.totalTenants.toLocaleString()}
             </p>
-            <p className="text-sm text-gray-500 mt-1">All registered</p>
+            <p className="text-sm mt-1" style={{ color: colors.muted }}>All registered</p>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg font-medium text-gray-900">
+          <div 
+            className="rounded-lg shadow-md p-6"
+            style={{ 
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+              border: `1px solid ${colors.border}`,
+              boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+            }}
+          >
+            <h3 className="text-lg font-medium" style={{ color: colors.onCard }}>
               Active Tenants
             </h3>
-            <p className="text-3xl font-bold text-green-600 mt-2">
+            <p className="text-3xl font-bold mt-2" style={{ color: colors.tertiary }}>
               {stats?.activeTenants.toLocaleString()}
             </p>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm mt-1" style={{ color: colors.muted }}>
               {stats
                 ? ((stats.activeTenants / stats.totalTenants) * 100).toFixed(1)
                 : 0}
@@ -338,12 +382,20 @@ export default function AllTenantsAnalytics() {
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg font-medium text-gray-900">With Domains</h3>
-            <p className="text-3xl font-bold text-purple-600 mt-2">
+          <div 
+            className="rounded-lg shadow-md p-6"
+            style={{ 
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+              border: `1px solid ${colors.border}`,
+              boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+            }}
+          >
+            <h3 className="text-lg font-medium" style={{ color: colors.onCard }}>With Domains</h3>
+            <p className="text-3xl font-bold mt-2" style={{ color: colors.secondary }}>
               {stats?.tenantsWithDomain.toLocaleString()}
             </p>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm mt-1" style={{ color: colors.muted }}>
               {stats
                 ? (
                     (stats.tenantsWithDomain / stats.totalTenants) *
@@ -354,12 +406,20 @@ export default function AllTenantsAnalytics() {
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg font-medium text-gray-900">Schema Ready</h3>
-            <p className="text-3xl font-bold text-indigo-600 mt-2">
+          <div 
+            className="rounded-lg shadow-md p-6"
+            style={{ 
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+              border: `1px solid ${colors.border}`,
+              boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+            }}
+          >
+            <h3 className="text-lg font-medium" style={{ color: colors.onCard }}>Schema Ready</h3>
+            <p className="text-3xl font-bold mt-2" style={{ color: colors.info }}>
               {stats?.tenantsWithSchema.toLocaleString()}
             </p>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm mt-1" style={{ color: colors.muted }}>
               {stats
                 ? (
                     (stats.tenantsWithSchema / stats.totalTenants) *
@@ -370,14 +430,22 @@ export default function AllTenantsAnalytics() {
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg font-medium text-gray-900">
+          <div 
+            className="rounded-lg shadow-md p-6"
+            style={{ 
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+              border: `1px solid ${colors.border}`,
+              boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+            }}
+          >
+            <h3 className="text-lg font-medium" style={{ color: colors.onCard }}>
               Recent Signups
             </h3>
-            <p className="text-3xl font-bold text-orange-600 mt-2">
+            <p className="text-3xl font-bold mt-2" style={{ color: colors.warning }}>
               {stats?.recentlyCreated.toLocaleString()}
             </p>
-            <p className="text-sm text-gray-500 mt-1">Last 30 days</p>
+            <p className="text-sm mt-1" style={{ color: colors.muted }}>Last 30 days</p>
           </div>
         </div>
 
@@ -385,8 +453,16 @@ export default function AllTenantsAnalytics() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Growth Chart */}
           {growthData && (
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold mb-4">
+            <div 
+              className="rounded-lg shadow-md p-6"
+              style={{ 
+                backgroundColor: colors.card,
+                borderColor: colors.border,
+                border: `1px solid ${colors.border}`,
+                boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+              }}
+            >
+              <h2 className="text-xl font-semibold mb-4" style={{ color: colors.onCard }}>
                 Monthly Growth Trend
               </h2>
               <Line
@@ -415,8 +491,16 @@ export default function AllTenantsAnalytics() {
 
           {/* Status Distribution */}
           {statusData && (
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold mb-4">
+            <div 
+              className="rounded-lg shadow-md p-6"
+              style={{ 
+                backgroundColor: colors.card,
+                borderColor: colors.border,
+                border: `1px solid ${colors.border}`,
+                boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+              }}
+            >
+              <h2 className="text-xl font-semibold mb-4" style={{ color: colors.onCard }}>
                 Status Distribution
               </h2>
               <div className="h-64 flex items-center justify-center">
@@ -427,6 +511,9 @@ export default function AllTenantsAnalytics() {
                     plugins: {
                       legend: {
                         position: "bottom" as const,
+                        labels: {
+                          color: colors.onCard,
+                        }
                       },
                     },
                   }}
@@ -441,8 +528,16 @@ export default function AllTenantsAnalytics() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Timezone Distribution */}
           {timezoneData && (
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold mb-4">Top Timezones</h2>
+            <div 
+              className="rounded-lg shadow-md p-6"
+              style={{ 
+                backgroundColor: colors.card,
+                borderColor: colors.border,
+                border: `1px solid ${colors.border}`,
+                boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+              }}
+            >
+              <h2 className="text-xl font-semibold mb-4" style={{ color: colors.onCard }}>Top Timezones</h2>
               <Bar
                 options={{
                   ...chartOptions,
@@ -462,8 +557,16 @@ export default function AllTenantsAnalytics() {
 
           {/* Server Distribution */}
           {serverData && (
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold mb-4">
+            <div 
+              className="rounded-lg shadow-md p-6"
+              style={{ 
+                backgroundColor: colors.card,
+                borderColor: colors.border,
+                border: `1px solid ${colors.border}`,
+                boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+              }}
+            >
+              <h2 className="text-xl font-semibold mb-4" style={{ color: colors.onCard }}>
                 Server Distribution
               </h2>
               <Bar
@@ -484,9 +587,17 @@ export default function AllTenantsAnalytics() {
         </div>
 
         {/* Tenants List Section */}
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div 
+          className="rounded-lg shadow-md p-6"
+          style={{ 
+            backgroundColor: colors.card,
+            borderColor: colors.border,
+            border: `1px solid ${colors.border}`,
+            boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+          }}
+        >
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-            <h2 className="text-xl font-semibold">
+            <h2 className="text-xl font-semibold" style={{ color: colors.onCard }}>
               All Tenants ({filteredTenants.length})
             </h2>
 
@@ -498,11 +609,18 @@ export default function AllTenantsAnalytics() {
                   placeholder="Search tenants..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  style={{ 
+                    backgroundColor: colors.surface,
+                    borderColor: colors.border,
+                    color: colors.onCard,
+                    border: `1px solid ${colors.border}`,
+                  }}
                 />
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <svg
-                    className="h-5 w-5 text-gray-400"
+                    className="h-5 w-5"
+                    style={{ color: colors.muted }}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -521,7 +639,13 @@ export default function AllTenantsAnalytics() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                style={{ 
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  color: colors.onCard,
+                  border: `1px solid ${colors.border}`,
+                }}
               >
                 <option value="all">All Status</option>
                 <option value="active">Active</option>
@@ -538,101 +662,112 @@ export default function AllTenantsAnalytics() {
 
           {/* Tenants Table */}
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y" style={{ borderColor: colors.border }}>
+              <thead style={{ backgroundColor: colors.primaryLight }}>
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: colors.onPrimaryLight }}>
                     Tenant
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: colors.onPrimaryLight }}>
                     Access Code
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: colors.onPrimaryLight }}>
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: colors.onPrimaryLight }}>
                     Domain
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: colors.onPrimaryLight }}>
                     Schema
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: colors.onPrimaryLight }}>
                     Timezone
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: colors.onPrimaryLight }}>
                     Created
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: colors.onPrimaryLight }}>
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="divide-y" style={{ 
+                backgroundColor: colors.card,
+                borderColor: colors.border 
+              }}>
                 {filteredTenants.map((tenant) => (
-                  <tr key={tenant.id} className="hover:bg-gray-50">
+                  <tr key={tenant.id} className="hover:bg-opacity-70" style={{ 
+                    backgroundColor: colors.card,
+                    color: colors.onCard 
+                  }}>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div>
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium" style={{ color: colors.onCard }}>
                             {tenant.name}
                           </div>
-                          <div className="text-sm text-gray-500">
+                          <div className="text-sm" style={{ color: colors.muted }}>
                             {tenant.id.substring(0, 8)}...
                           </div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" style={{ 
+                        backgroundColor: colors.surface,
+                        color: colors.onCard 
+                      }}>
                         {tenant.access_code}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          tenant.is_active
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium`}
+                        style={{
+                          backgroundColor: tenant.is_active ? `${colors.tertiary}20` : `${colors.error}20`,
+                          color: tenant.is_active ? colors.tertiary : colors.error
+                        }}
                       >
                         <div
-                          className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
-                            tenant.is_active ? "bg-green-500" : "bg-red-500"
-                          }`}
+                          className={`w-1.5 h-1.5 rounded-full mr-1.5`}
+                          style={{ 
+                            backgroundColor: tenant.is_active ? colors.tertiary : colors.error 
+                          }}
                         ></div>
                         {tenant.status ||
                           (tenant.is_active ? "Active" : "Inactive")}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: colors.onCard }}>
                       {tenant.sub_domain ? (
                         <a
                           href={`https://${tenant.sub_domain}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-blue-600 hover:text-blue-900 underline"
+                          className="underline"
+                          style={{ color: colors.primary }}
                         >
                           {tenant.sub_domain}
                         </a>
                       ) : (
-                        <span className="text-gray-400">Not set</span>
+                        <span style={{ color: colors.muted }}>Not set</span>
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          tenant.schema_created
-                            ? "bg-green-100 text-green-800"
-                            : "bg-yellow-100 text-yellow-800"
-                        }`}
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium`}
+                        style={{
+                          backgroundColor: tenant.schema_created ? `${colors.tertiary}20` : `${colors.warning}20`,
+                          color: tenant.schema_created ? colors.tertiary : colors.warning
+                        }}
                       >
                         {tenant.schema_created ? "Ready" : "Pending"}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: colors.onCard }}>
                       {tenant.time_zone}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: colors.onCard }}>
                       {new Date(tenant.created_at).toLocaleDateString("en-US", {
                         year: "numeric",
                         month: "short",
@@ -644,14 +779,15 @@ export default function AllTenantsAnalytics() {
                         onClick={() =>
                           router.push(`/dashboard/tenants/${tenant.id}`)
                         }
-                        className="text-indigo-600 hover:text-indigo-900 mr-3"
+                        className="mr-3"
+                        style={{ color: colors.primary }}
                       >
                         View Details
                       </button>
                       <button
                         onClick={() => navigator.clipboard.writeText(tenant.id)}
-                        className="text-gray-600 hover:text-gray-900"
                         title="Copy ID"
+                        style={{ color: colors.muted }}
                       >
                         Copy ID
                       </button>
@@ -664,7 +800,7 @@ export default function AllTenantsAnalytics() {
 
           {filteredTenants.length === 0 && (
             <div className="text-center py-8">
-              <p className="text-gray-500">
+              <p style={{ color: colors.muted }}>
                 No tenants found matching your criteria.
               </p>
             </div>
@@ -673,36 +809,52 @@ export default function AllTenantsAnalytics() {
 
         {/* Summary Statistics */}
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+          <div 
+            className="rounded-lg shadow-md p-6"
+            style={{ 
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+              border: `1px solid ${colors.border}`,
+              boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+            }}
+          >
+            <h3 className="text-lg font-medium mb-4" style={{ color: colors.onCard }}>
               Configuration Summary
             </h3>
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-gray-600">
+                <span style={{ color: colors.muted }}>
                   With Business Registration
                 </span>
-                <span className="font-semibold">
+                <span className="font-semibold" style={{ color: colors.onCard }}>
                   {allTenants.filter((t) => t.business_reg_number).length}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Unique Timezones</span>
-                <span className="font-semibold">
+                <span style={{ color: colors.muted }}>Unique Timezones</span>
+                <span className="font-semibold" style={{ color: colors.onCard }}>
                   {stats ? Object.keys(stats.tenantsByTimeZone).length : 0}
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+          <div 
+            className="rounded-lg shadow-md p-6"
+            style={{ 
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+              border: `1px solid ${colors.border}`,
+              boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+            }}
+          >
+            <h3 className="text-lg font-medium mb-4" style={{ color: colors.onCard }}>
               Growth Metrics
             </h3>
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-gray-600">Average per Month</span>
-                <span className="font-semibold">
+                <span style={{ color: colors.muted }}>Average per Month</span>
+                <span className="font-semibold" style={{ color: colors.onCard }}>
                   {stats
                     ? Math.round(
                         Object.values(stats.monthlyGrowth).reduce(
@@ -714,15 +866,15 @@ export default function AllTenantsAnalytics() {
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Peak Month</span>
-                <span className="font-semibold">
+                <span style={{ color: colors.muted }}>Peak Month</span>
+                <span className="font-semibold" style={{ color: colors.onCard }}>
                   {stats ? Math.max(...Object.values(stats.monthlyGrowth)) : 0}{" "}
                   tenants
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Growth Rate</span>
-                <span className="font-semibold text-green-600">
+                <span style={{ color: colors.muted }}>Growth Rate</span>
+                <span className="font-semibold" style={{ color: colors.tertiary }}>
                   {stats?.recentlyCreated && stats.totalTenants
                     ? `+${((stats.recentlyCreated / (stats.totalTenants - stats.recentlyCreated)) * 100).toFixed(1)}%`
                     : "0%"}
@@ -731,14 +883,22 @@ export default function AllTenantsAnalytics() {
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+          <div 
+            className="rounded-lg shadow-md p-6"
+            style={{ 
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+              border: `1px solid ${colors.border}`,
+              boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+            }}
+          >
+            <h3 className="text-lg font-medium mb-4" style={{ color: colors.onCard }}>
               System Health
             </h3>
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-gray-600">Active Rate</span>
-                <span className="font-semibold text-green-600">
+                <span style={{ color: colors.muted }}>Active Rate</span>
+                <span className="font-semibold" style={{ color: colors.tertiary }}>
                   {stats
                     ? (
                         (stats.activeTenants / stats.totalTenants) *
@@ -749,8 +909,8 @@ export default function AllTenantsAnalytics() {
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Schema Completion</span>
-                <span className="font-semibold text-blue-600">
+                <span style={{ color: colors.muted }}>Schema Completion</span>
+                <span className="font-semibold" style={{ color: colors.info }}>
                   {stats
                     ? (
                         (stats.tenantsWithSchema / stats.totalTenants) *
@@ -761,8 +921,8 @@ export default function AllTenantsAnalytics() {
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Domain Setup</span>
-                <span className="font-semibold text-purple-600">
+                <span style={{ color: colors.muted }}>Domain Setup</span>
+                <span className="font-semibold" style={{ color: colors.secondary }}>
                   {stats
                     ? (
                         (stats.tenantsWithDomain / stats.totalTenants) *

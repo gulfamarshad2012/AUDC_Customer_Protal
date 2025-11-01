@@ -1,3 +1,4 @@
+// File: components/AccountsTable.tsx
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabase";
@@ -14,6 +15,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { colors } from "@/config/color-scheme";
 
 interface Account {
   account_id: string;
@@ -82,7 +84,9 @@ export function AccountsTable({ onEdit, onAdd, refresh }: AccountsTableProps) {
     toast(
       (t) => (
         <div className="flex items-center justify-between gap-4">
-          <span>{deletedAccount.company_name} deleted. Undo?</span>
+          <span style={{ color: colors.onCard }}>
+            {deletedAccount.company_name} deleted. Undo?
+          </span>
           <Button
             size="sm"
             variant="outline"
@@ -94,6 +98,12 @@ export function AccountsTable({ onEdit, onAdd, refresh }: AccountsTableProps) {
               setAccounts((prev) => [deletedAccount, ...prev]);
               toast.dismiss(t.id);
               toast.success("Deletion undone");
+            }}
+            style={{
+              backgroundColor: colors.surface,
+              borderColor: colors.primary,
+              color: colors.primary,
+              border: `1px solid ${colors.primary}`,
             }}
           >
             Undo
@@ -131,74 +141,147 @@ export function AccountsTable({ onEdit, onAdd, refresh }: AccountsTableProps) {
   };
 
   if (loading) {
-    return <div className="p-4">Loading accounts...</div>;
+    return (
+      <div className="p-4" style={{ color: colors.onBackground }}>
+        Loading accounts...
+      </div>
+    );
   }
 
   return (
-    <div className="p-6">
+    <div className="p-6" style={{ backgroundColor: colors.background }}>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Accounts</h1>
-        <Button onClick={onAdd} className="flex items-center gap-2">
+        <h1
+          className="text-2xl font-bold"
+          style={{ color: colors.onBackground }}
+        >
+          Accounts
+        </h1>
+        <Button
+          onClick={onAdd}
+          className="flex items-center gap-2"
+          style={{
+            backgroundColor: colors.primary,
+            color: colors.onPrimary,
+          }}
+        >
           <Plus className="h-4 w-4" />
           Add Account
         </Button>
       </div>
 
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+      <div
+        className="rounded-lg overflow-hidden"
+        style={{
+          backgroundColor: colors.card,
+          borderColor: colors.border,
+          border: `1px solid ${colors.border}`,
+          boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+        }}
+      >
+        <table
+          className="min-w-full divide-y"
+          style={{ borderColor: colors.border }}
+        >
+          <thead style={{ backgroundColor: colors.primaryLight }}>
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th
+                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                style={{ color: colors.onPrimaryLight }}
+              >
                 Company Name
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th
+                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                style={{ color: colors.onPrimaryLight }}
+              >
                 Contact Name
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th
+                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                style={{ color: colors.onPrimaryLight }}
+              >
                 Contact Email
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th
+                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                style={{ color: colors.onPrimaryLight }}
+              >
                 Balance
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th
+                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                style={{ color: colors.onPrimaryLight }}
+              >
                 Status
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th
+                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                style={{ color: colors.onPrimaryLight }}
+              >
                 Created
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th
+                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                style={{ color: colors.onPrimaryLight }}
+              >
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody
+            className="divide-y"
+            style={{
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+            }}
+          >
             {accounts.map((account) => (
               <tr key={account.account_id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                <td
+                  className="px-6 py-4 whitespace-nowrap text-sm font-medium"
+                  style={{ color: colors.onCard }}
+                >
                   {account.company_name}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td
+                  className="px-6 py-4 whitespace-nowrap text-sm"
+                  style={{ color: colors.onCard }}
+                >
                   {account.contact_name}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td
+                  className="px-6 py-4 whitespace-nowrap text-sm"
+                  style={{ color: colors.onCard }}
+                >
                   {account.contact_email}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td
+                  className="px-6 py-4 whitespace-nowrap text-sm"
+                  style={{ color: colors.onCard }}
+                >
                   {account.preference_currency}{" "}
                   {account.account_balance.toFixed(2)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span
-                    className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      account.is_active
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
-                    }`}
+                    className="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
+                    style={{
+                      backgroundColor: account.is_active
+                        ? colors.success
+                        : colors.error,
+                      color: account.is_active
+                        ? colors.onSuccess
+                        : colors.onError,
+                    }}
                   >
                     {account.is_active ? "Active" : "Inactive"}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td
+                  className="px-6 py-4 whitespace-nowrap text-sm"
+                  style={{ color: colors.onCard }}
+                >
                   {new Date(account.created_at).toLocaleDateString()}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -207,6 +290,12 @@ export function AccountsTable({ onEdit, onAdd, refresh }: AccountsTableProps) {
                       variant="outline"
                       size="sm"
                       onClick={() => onEdit(account)}
+                      style={{
+                        backgroundColor: colors.surface,
+                        borderColor: colors.primary,
+                        color: colors.primary,
+                        border: `1px solid ${colors.primary}`,
+                      }}
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
@@ -214,7 +303,12 @@ export function AccountsTable({ onEdit, onAdd, refresh }: AccountsTableProps) {
                       variant="outline"
                       size="sm"
                       onClick={() => handleDeleteClick(account)}
-                      className="text-red-600 hover:text-red-800"
+                      style={{
+                        backgroundColor: colors.surface,
+                        borderColor: colors.error,
+                        color: colors.error,
+                        border: `1px solid ${colors.error}`,
+                      }}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -225,7 +319,7 @@ export function AccountsTable({ onEdit, onAdd, refresh }: AccountsTableProps) {
           </tbody>
         </table>
         {accounts.length === 0 && (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8" style={{ color: colors.muted }}>
             No accounts found. Click "Add Account" to create your first account.
           </div>
         )}
@@ -233,21 +327,42 @@ export function AccountsTable({ onEdit, onAdd, refresh }: AccountsTableProps) {
 
       {/* Shadcn UI Alert Dialog */}
       <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <AlertDialogContent>
+        <AlertDialogContent
+          style={{
+            backgroundColor: colors.card,
+            borderColor: colors.border,
+            borderWidth: "1px",
+            border: `1px solid ${colors.border}`,
+          }}
+        >
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Account?</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle style={{ color: colors.onCard }}>
+              Delete Account?
+            </AlertDialogTitle>
+            <AlertDialogDescription style={{ color: colors.muted }}>
               Are you sure you want to delete{" "}
-              <span className="font-semibold">
+              <span className="font-semibold" style={{ color: colors.onCard }}>
                 {accountToDelete?.company_name}
               </span>
               ? You will have 6 seconds to undo this action.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel
+              style={{
+                backgroundColor: colors.surface,
+                borderColor: colors.border,
+                color: colors.onCard,
+                border: `1px solid ${colors.border}`,
+              }}
+            >
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
-              className="bg-red-600 hover:bg-red-700 text-white"
+              style={{
+                backgroundColor: colors.error,
+                color: colors.onError,
+              }}
               onClick={confirmDeletion}
             >
               Delete

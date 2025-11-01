@@ -2,7 +2,7 @@
 "use client";
 
 import type React from "react";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -172,6 +172,48 @@ export function Dashboard() {
   });
 
   const [draggedWidget, setDraggedWidget] = useState<string | null>(null);
+  // Load saved widgets/layouts from localStorage on mount
+  useEffect(() => {
+    try {
+      const storedWidgets = localStorage.getItem("dashboard_widgets");
+      const storedLayouts = localStorage.getItem("dashboard_layouts");
+
+      if (storedWidgets) {
+        const parsed: { id: string; type: string }[] = JSON.parse(storedWidgets);
+        const reconstructed: Widget[] = parsed.map((p) => {
+          const tmpl = allWidgets.find((t) => t.type === p.type);
+          return {
+            id: p.id,
+            type: p.type,
+            title: tmpl?.title ?? p.type,
+            icon: tmpl?.icon ?? <BarChart3 className="h-4 w-4" />,
+            component: tmpl?.component ?? AnalyticsWidget,
+          };
+        });
+        setWidgets(reconstructed);
+      }
+
+      if (storedLayouts) {
+        setLayouts(JSON.parse(storedLayouts));
+      }
+    } catch (err) {
+      // fail silently but log to console for debugging
+      // eslint-disable-next-line no-console
+      console.error("Failed to load dashboard from localStorage:", err);
+    }
+  }, []);
+
+  // Persist widgets (id + type) and layouts to localStorage whenever they change
+  useEffect(() => {
+    try {
+      const serializable = widgets.map((w) => ({ id: w.id, type: w.type }));
+      localStorage.setItem("dashboard_widgets", JSON.stringify(serializable));
+      localStorage.setItem("dashboard_layouts", JSON.stringify(layouts));
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error("Failed to save dashboard to localStorage:", err);
+    }
+  }, [widgets, layouts]);
 
   // Get available widgets (not in layout)
   const availableWidgets = allWidgets.filter(
@@ -256,9 +298,9 @@ export function Dashboard() {
   };
 
   return (
-    <div className="h-full overflow-y-hidden bg-white">
+    <div className="h-full select-none overflow-y-hidden bg-white">
       {/* Header */}
-      <header className="border-b border bg-card/50 backdrop-blur-sm">
+      {/* <header className="border-b border backdrop-blur-sm">
         <div className="flex h-16 items-center justify-between px-6">
           <div>
             <h1 className="text-2xl font-semibold text-foreground">
@@ -269,7 +311,7 @@ export function Dashboard() {
             </p>
           </div>
         </div>
-      </header>
+      </header> */}
 
       <div className="flex flex-row h-[calc(100vh-64px)] ">
         {/* Dashboard Grid */}

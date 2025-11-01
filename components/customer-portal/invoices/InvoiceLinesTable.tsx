@@ -14,6 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { colors } from "@/config/color-scheme";
 
 interface InvoiceLine {
   invoice_line_id: string;
@@ -132,82 +133,160 @@ export function InvoiceLinesTable({
     }
   };
 
-  // if (loading) return <div className="p-4">Loading invoice lines...</div>;
-
   return (
-    <div className="p-6 space-y-6">
+    <div 
+      className="p-6 space-y-6"
+      style={{ backgroundColor: colors.card }}
+    >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button variant="outline" onClick={onBack} className="flex items-center gap-2">
+          <Button 
+            variant="outline" 
+            onClick={onBack} 
+            className="flex items-center gap-2"
+            style={{ 
+              backgroundColor: colors.surface,
+              borderColor: colors.border,
+              color: colors.onCard,
+              border: `1px solid ${colors.border}`,
+            }}
+          >
             <ArrowLeft className="h-4 w-4" />
             Back to Invoices
           </Button>
           <div>
-            <h1 className="text-2xl font-bold">Invoice Lines</h1>
+            <h1 
+              className="text-2xl font-bold"
+              style={{ color: colors.onCard }}
+            >
+              Invoice Lines
+            </h1>
             {invoiceHeader && (
-              <p className="text-sm text-muted-foreground">
+              <p 
+                className="text-sm"
+                style={{ color: colors.muted }}
+              >
                 Invoice ID: {invoiceHeader.invoice_id.substring(0, 8)}... —{" "}
                 {invoiceHeader.account?.company_name}
               </p>
             )}
           </div>
         </div>
-        <Button onClick={onAdd} className="flex items-center gap-2">
+        <Button 
+          onClick={onAdd} 
+          className="flex items-center gap-2"
+          style={{ 
+            backgroundColor: colors.primary,
+            color: colors.onPrimary
+          }}
+        >
           <Plus className="h-4 w-4" /> Add Line Item
         </Button>
       </div>
 
       <Table>
-        <TableCaption>A list of all invoice line items.</TableCaption>
+        <TableCaption style={{ color: colors.muted }}>
+          A list of all invoice line items.
+        </TableCaption>
         <TableHeader>
-          <TableRow>
-            <TableHead>Line #</TableHead>
-            <TableHead>Product</TableHead>
-            <TableHead>Tenant</TableHead>
-            <TableHead>Quantity</TableHead>
-            <TableHead>Subtotal</TableHead>
-            <TableHead>Discount</TableHead>
-            <TableHead>Tax</TableHead>
-            <TableHead>Total</TableHead>
-            <TableHead>Actions</TableHead>
+          <TableRow style={{ backgroundColor: colors.primaryLight }}>
+            <TableHead style={{ color: colors.onPrimaryLight }}>Line #</TableHead>
+            <TableHead style={{ color: colors.onPrimaryLight }}>Product</TableHead>
+            <TableHead style={{ color: colors.onPrimaryLight }}>Tenant</TableHead>
+            <TableHead style={{ color: colors.onPrimaryLight }}>Quantity</TableHead>
+            <TableHead style={{ color: colors.onPrimaryLight }}>Subtotal</TableHead>
+            <TableHead style={{ color: colors.onPrimaryLight }}>Discount</TableHead>
+            <TableHead style={{ color: colors.onPrimaryLight }}>Tax</TableHead>
+            <TableHead style={{ color: colors.onPrimaryLight }}>Total</TableHead>
+            <TableHead style={{ color: colors.onPrimaryLight }}>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {lines.map((line) => (
-            <TableRow key={line.invoice_line_id}>
+          {lines.map((line, index) => (
+            <TableRow 
+              key={line.invoice_line_id}
+              style={{ 
+                backgroundColor: index % 2 === 0 ? colors.card : colors.surface,
+                color: colors.onCard
+              }}
+            >
               <TableCell>{line.line_number || "N/A"}</TableCell>
               <TableCell>{line.product_name || "N/A"}</TableCell>
               <TableCell>{line.tenant_name || "N/A"}</TableCell>
               <TableCell>{line.quantity || 0}</TableCell>
               <TableCell>
-                <Badge variant="secondary">
+                <Badge 
+                  variant="secondary"
+                  style={{ 
+                    backgroundColor: colors.surface,
+                    color: colors.onCard,
+                    borderColor: colors.border,
+                    border: `1px solid ${colors.border}`,
+                  }}
+                >
                   {line.currency} {line.line_subtotal?.toFixed(2) || "0.00"}
                 </Badge>
               </TableCell>
               <TableCell>
-                <Badge variant="outline">
+                <Badge 
+                  variant="outline"
+                  style={{ 
+                    backgroundColor: colors.surface,
+                    color: colors.onCard,
+                    borderColor: colors.border,
+                    border: `1px solid ${colors.border}`,
+                  }}
+                >
                   {line.currency} {line.line_discount?.toFixed(2) || "0.00"}
                 </Badge>
               </TableCell>
               <TableCell>
-                <Badge variant="outline">
+                <Badge 
+                  variant="outline"
+                  style={{ 
+                    backgroundColor: colors.surface,
+                    color: colors.onCard,
+                    borderColor: colors.border,
+                    border: `1px solid ${colors.border}`,
+                  }}
+                >
                   {line.currency} {line.line_tax?.toFixed(2) || "0.00"}
                 </Badge>
               </TableCell>
               <TableCell>
-                <Badge>
+                <Badge 
+                  style={{ 
+                    backgroundColor: colors.primaryLight,
+                    color: colors.onPrimaryLight
+                  }}
+                >
                   {line.currency} {line.line_total?.toFixed(2) || "0.00"}
                 </Badge>
               </TableCell>
               <TableCell className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={() => onEdit(line)}>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => onEdit(line)}
+                  style={{ 
+                    backgroundColor: colors.surface,
+                    borderColor: colors.border,
+                    color: colors.onCard,
+                    border: `1px solid ${colors.border}`,
+                  }}
+                >
                   <Edit className="h-4 w-4" />
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => handleDelete(line.invoice_line_id)}
-                  className="text-red-600 hover:text-red-800"
+                  style={{ 
+                    backgroundColor: colors.surface,
+                    borderColor: colors.error,
+                    color: colors.error,
+                    border: `1px solid ${colors.error}`,
+                  }}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
@@ -218,14 +297,20 @@ export function InvoiceLinesTable({
       </Table>
 
       {lines.length === 0 && (
-        <div className="text-center py-6 text-muted-foreground">
+        <div 
+          className="text-center py-6"
+          style={{ color: colors.muted }}
+        >
           No invoice lines found. Click "Add Line Item" to create your first line item.
         </div>
       )}
 
       {lines.length > 0 && (
         <div className="flex justify-end">
-          <span className="text-sm font-medium">
+          <span 
+            className="text-sm font-medium"
+            style={{ color: colors.onCard }}
+          >
             Total: {invoiceHeader?.currency || "USD"}{" "}
             {lines.reduce((sum, line) => sum + (line.line_total || 0), 0).toFixed(2)}
           </span>

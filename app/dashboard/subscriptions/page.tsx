@@ -8,6 +8,13 @@ import {
   Loader2,
   CheckCircle,
   HelpCircle,
+  CreditCard,
+  Shield,
+  Users,
+  Database,
+  BarChart3,
+  Settings,
+  Globe,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -30,6 +37,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { colors } from "@/config/color-scheme";
 
 // Define a type for a single currency
 type CurrencyData = {
@@ -111,7 +127,7 @@ const plans = [
       "Standard templates",
     ],
     popular: false,
-    buttonText: "Down Create",
+    buttonText: "Get Started",
     trialDays: 14,
   },
   {
@@ -252,8 +268,6 @@ export default function SubscriptionPage() {
           });
         }
         setFeatureMapping(mapping);
-
-
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -424,20 +438,48 @@ export default function SubscriptionPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+      <div
+        className="flex min-h-[400px] items-center justify-center"
+        style={{ backgroundColor: colors.background }}
+      >
+        <Loader2
+          className="h-8 w-8 animate-spin"
+          style={{ color: colors.primary }}
+        />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen max-w-full w-full bg-background">
+    <div
+      className="min-h-screen max-w-full w-full"
+      style={{ backgroundColor: colors.background }}
+    >
       {/* Header Section */}
       <div className="container mx-auto px-4 py-16 text-center">
-        <h1 className="font-space-grotesk text-4xl md:text-6xl font-bold text-foreground mb-6">
+        <div className="mb-6">
+          <div
+            className="inline-flex items-center justify-center p-3 rounded-full mb-4"
+            style={{ backgroundColor: `${colors.primary}10` }}
+          >
+            <div
+              className="p-2 rounded-full"
+              style={{ backgroundColor: colors.primary }}
+            >
+              <CreditCard className="h-6 w-6 text-white" />
+            </div>
+          </div>
+        </div>
+        <h1
+          className="text-4xl md:text-6xl font-bold mb-4"
+          style={{ color: colors.onCard }}
+        >
           Choose Your Perfect Plan
         </h1>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
+        <p
+          className="text-xl max-w-2xl mx-auto mb-8"
+          style={{ color: colors.muted }}
+        >
           Unlock powerful features and take your productivity to the next level
           with our flexible subscription options
         </p>
@@ -445,51 +487,52 @@ export default function SubscriptionPage() {
 
       <div className="max-w-7xl mx-auto">
         {/* Header Controls */}
-        <div className="flex justify-between items-center mb-6 gap-6 max-w-6xl mx-auto">
+        <div className="flex justify-between items-center mb-10 gap-6 max-w-6xl mx-auto">
           <div>
-            {/* Save 20% Badge with SVG */}
+            {/* Save 20% Badge */}
             <div className="flex items-center gap-3 mb-6">
-              <svg
-                className="shrink-0 -mb-4 -mr-4"
-                height="33"
-                viewBox="0 0 54 54"
-                width="42"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M18.7 1.2C16 21 21.3 39.3 34.2 43.4"
-                  fill="none"
-                  stroke="#25221E"
-                  strokeLinecap="round"
-                  strokeOpacity="0.5"
-                  strokeWidth="2"
-                />
-                <path
-                  d="m36.3 38.8-.2.6c0 .2.1.5.4.8.4.8.8 1.7 1 2.6.4 1 .6 2 .7 2.8v1.8l-2 .1a18 18 0 0 1-4.8-.8 3 3 0 0 0-.8-.2c-.2 0-.4.1-.5.3a1 1 0 0 0-.3.7c0 .3.1.5.4.7l.3.2.7.3a17 17 0 0 0 3.6.6 30 30 0 0 0 4 0h.6a1.5 1.5 0 0 0 .5-.6l.2-.6a13.3 13.3 0 0 0-.1-4 17 17 0 0 0-1.9-5c0-.2-.2-.3-.3-.4a1 1 0 0 0-.7-.3c-.3 0-.5.1-.8.4"
-                  fill="#25221E"
-                  fillOpacity="0.5"
-                />
-              </svg>
-              <p className="text-lg italic text-gray-600">Save 20%</p>
+              <div className="relative">
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full blur opacity-75"></div>
+                <div className="relative bg-white rounded-full px-4 py-2 flex items-center">
+                  <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+                    Save 20%
+                  </span>
+                </div>
+              </div>
             </div>
             {/* Billing Cycle Tabs */}
-            <div className="flex bg-white rounded-lg p-1 shadow-sm border border-gray-200">
+            <div
+              className="flex rounded-lg p-1 shadow-sm"
+              style={{ backgroundColor: colors.surface }}
+            >
               <button
                 className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
-                  billingCycle === "yearly"
-                    ? "bg-gray-100 text-gray-900 shadow-sm"
-                    : "text-gray-600 hover:text-gray-900"
+                  billingCycle === "yearly" ? "" : ""
                 }`}
+                style={{
+                  backgroundColor:
+                    billingCycle === "yearly" ? colors.primary : "transparent",
+                  color:
+                    billingCycle === "yearly"
+                      ? colors.onPrimary
+                      : colors.onCard,
+                }}
                 onClick={() => setBillingCycle("yearly")}
               >
                 Billed Yearly
               </button>
               <button
                 className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
-                  billingCycle === "monthly"
-                    ? "bg-gray-100 text-gray-900 shadow-sm"
-                    : "text-gray-600 hover:text-gray-900"
+                  billingCycle === "monthly" ? "" : ""
                 }`}
+                style={{
+                  backgroundColor:
+                    billingCycle === "monthly" ? colors.primary : "transparent",
+                  color:
+                    billingCycle === "monthly"
+                      ? colors.onPrimary
+                      : colors.onCard,
+                }}
                 onClick={() => setBillingCycle("monthly")}
               >
                 Billed Monthly
@@ -498,26 +541,36 @@ export default function SubscriptionPage() {
           </div>
           {/* Currency Selector */}
           <div className="relative flex">
-            <p className="text-md font-bold my-auto text-gray-900 mr-2">
+            <p
+              className="text-md font-bold my-auto mr-2"
+              style={{ color: colors.onCard }}
+            >
               Prices in
             </p>
             <div className="relative">
               <button
-                className="flex items-center justify-between w-32 px-4 py-2.5 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                className="flex items-center justify-between w-32 px-4 py-2.5 rounded-lg shadow-sm transition-all"
+                style={{
+                  backgroundColor: colors.surface,
+                  border: `1px solid ${colors.border}`,
+                }}
                 onClick={() => setCurrencyDropdownOpen(!currencyDropdownOpen)}
               >
                 <span className="flex items-center">
-                  <span className="text-gray-900 font-medium">
+                  <span
+                    className="font-medium"
+                    style={{ color: colors.onCard }}
+                  >
                     {currencyRates[currency].name}
                   </span>
                 </span>
                 <svg
-                  className={`w-5 h-5 text-gray-500 transition-transform ${
+                  className={`w-5 h-5 transition-transform ${
                     currencyDropdownOpen ? "rotate-180" : ""
                   }`}
                   fill="currentColor"
                   viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
+                  style={{ color: colors.muted }}
                 >
                   <path
                     clipRule="evenodd"
@@ -529,31 +582,43 @@ export default function SubscriptionPage() {
 
               {/* Dropdown Menu */}
               {currencyDropdownOpen && (
-                <div className="absolute right-0 z-10 mt-2 w-48 origin-top-right bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+                <div
+                  className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-lg shadow-lg overflow-hidden"
+                  style={{ backgroundColor: colors.card }}
+                >
                   <div className="py-1">
                     {Object.entries(currencyRates).map(([code, data]) => (
                       <button
                         key={code}
-                        className={`flex items-center w-full px-4 py-3 text-left text-sm hover:bg-gray-50 transition-colors ${
-                          currency === code
-                            ? "bg-blue-50 text-blue-700"
-                            : "text-gray-700"
+                        className={`flex items-center w-full px-4 py-3 text-left text-sm transition-colors ${
+                          currency === code ? "" : ""
                         }`}
+                        style={{
+                          backgroundColor:
+                            currency === code
+                              ? `${colors.primary}10`
+                              : "transparent",
+                          color:
+                            currency === code ? colors.primary : colors.onCard,
+                        }}
                         onClick={() => {
                           setCurrency(code as keyof CurrencyRates);
                           setCurrencyDropdownOpen(false);
                         }}
                       >
                         <span className="font-medium">{data.name}</span>
-                        <span className="ml-2 text-xs text-gray-500">
+                        <span
+                          className="ml-2 text-xs"
+                          style={{ color: colors.muted }}
+                        >
                           ({data.symbol})
                         </span>
                         {currency === code && (
                           <svg
-                            className="w-5 h-5 ml-auto text-blue-500"
+                            className="w-5 h-5 ml-auto"
                             fill="currentColor"
                             viewBox="0 0 20 20"
-                            xmlns="http://www.w3.org/2000/svg"
+                            style={{ color: colors.primary }}
                           >
                             <path
                               clipRule="evenodd"
@@ -578,7 +643,6 @@ export default function SubscriptionPage() {
               billingCycle === "yearly"
                 ? product.annual_price
                 : product.monthly_price;
-            const formattedPrice = formatPrice(price);
 
             // Determine button text and action based on current plan
             const isCurrentPlan = currentPlan === product.id;
@@ -590,52 +654,82 @@ export default function SubscriptionPage() {
             return (
               <div
                 key={product.id}
-                className={`bg-white rounded-xl shadow-lg border-2 relative overflow-hidden ${
-                  product.max_users > 1 ? "border-green-400" : "border-gray-200"
-                }`}
+                className="relative overflow-hidden rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl"
+                style={{
+                  backgroundColor: colors.card,
+                  border: `1px solid ${colors.border}`,
+                }}
               >
+                {product.popular && (
+                  <div className="absolute top-0 right-0 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-xs font-bold px-4 py-2 rounded-bl-lg">
+                    MOST POPULAR
+                  </div>
+                )}
                 {product.max_users > 1 && (
-                  <div className="bg-green-100 text-green-700 text-xs px-3 py-1 absolute top-4 right-4 rounded-full font-semibold">
+                  <div
+                    className="absolute top-4 right-4 rounded-full px-3 py-1 text-xs font-semibold"
+                    style={{
+                      backgroundColor: `${colors.success}20`,
+                      color: colors.success,
+                      border: `1px solid ${colors.success}`,
+                    }}
+                  >
                     Up to {product.max_users} users
                   </div>
                 )}
                 <div className="p-8">
-                  {/* Plan Name & Details */}
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                    {product.name}
-                  </h3>
-                  <p className="text-gray-600 text-sm mb-6">
-                    {product.plan_name}
-                  </p>
-                  {product.max_users > 1 && (
-                    <p className="text-sm text-blue-600 mb-4">
-                      Create a team workspace
-                      <span className="inline-flex items-center">
-                        <svg
-                          className="w-4 h-4 ml-1"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
+                  {/* Plan Header */}
+                  <div className="flex items-start justify-between mb-6">
+                    <div>
+                      <div className="flex items-center gap-3 mb-2">
+                        <div
+                          className="p-2 rounded-lg"
+                          style={{ backgroundColor: `${colors.primary}10` }}
                         >
-                          <path
-                            clipRule="evenodd"
-                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                            fillRule="evenodd"
-                          />
-                        </svg>
-                      </span>
-                    </p>
-                  )}
+                          {product.icon}
+                        </div>
+                        <h3
+                          className="text-2xl font-bold"
+                          style={{ color: colors.onCard }}
+                        >
+                          {product.name}
+                        </h3>
+                      </div>
+                      <p className="text-sm" style={{ color: colors.muted }}>
+                        {product.description}
+                      </p>
+                    </div>
+                    {product.max_users > 1 && (
+                      <div
+                        className="flex items-center gap-1 px-3 py-1 rounded-full text-xs"
+                        style={{
+                          backgroundColor: `${colors.primary}10`,
+                          color: colors.primary,
+                        }}
+                      >
+                        <Users className="w-3 h-3" />
+                        <span>Team Workspace</span>
+                      </div>
+                    )}
+                  </div>
+
                   {/* Pricing */}
-                  <div className="mb-6">
+                  <div className="mb-8">
                     <div className="flex items-baseline">
-                      <span className="text-[10px] text-gray-500 mr-1">
+                      <span className="text-sm" style={{ color: colors.muted }}>
                         {currencyRates[currency].name}
                       </span>
-                      <span className="text-4xl text-gray-900">
+                      <span
+                        className="text-4xl font-bold ml-1"
+                        style={{ color: colors.onCard }}
+                      >
                         {formatPrice(price)}
                       </span>
                       {price > 0 && (
-                        <span className="text-sm text-gray-500 ml-3 -translate-y-4">
+                        <span
+                          className="text-sm ml-3"
+                          style={{ color: colors.muted }}
+                        >
                           {billingCycle === "yearly"
                             ? `per user/month · ${formatPrice(
                                 price * 12
@@ -648,9 +742,13 @@ export default function SubscriptionPage() {
                       )}
                     </div>
                   </div>
+
                   {/* Features */}
-                  <div className="space-y-4">
-                    <h4 className="text-sm font-medium text-gray-900">
+                  <div className="space-y-4 mb-8">
+                    <h4
+                      className="text-sm font-medium"
+                      style={{ color: colors.onCard }}
+                    >
                       {product.plan_name === "Beginner"
                         ? "An account with:"
                         : product.plan_name === "Pro"
@@ -664,7 +762,10 @@ export default function SubscriptionPage() {
                           if (!feature) return null;
                           return (
                             <li key={i} className="flex items-start group">
-                              <CheckCircle className="w-5 h-5 text-gray-400 mr-3 mt-0.5 flex-shrink-0" />
+                              <CheckCircle
+                                className="w-5 h-5 mr-3 mt-0.5 flex-shrink-0"
+                                style={{ color: colors.success }}
+                              />
                               <div
                                 className="flex items-center"
                                 onMouseEnter={(e) =>
@@ -673,11 +774,17 @@ export default function SubscriptionPage() {
                                 onMouseMove={handleMouseMove}
                                 onMouseLeave={handleMouseLeave}
                               >
-                                <span className="text-sm text-gray-700">
+                                <span
+                                  className="text-sm"
+                                  style={{ color: colors.onCard }}
+                                >
                                   {feature.name}
                                 </span>
                                 {feature.description && (
-                                  <HelpCircle className="w-4 h-4 ml-1 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity cursor-help" />
+                                  <HelpCircle
+                                    className="w-4 h-4 ml-1 opacity-0 group-hover:opacity-100 transition-opacity cursor-help"
+                                    style={{ color: colors.muted }}
+                                  />
                                 )}
                               </div>
                             </li>
@@ -690,11 +797,18 @@ export default function SubscriptionPage() {
                   {/* Action Button */}
                   <div className="mt-8">
                     <Button
-                      className={`w-full py-3 text-base font-medium ${
-                        isCurrentPlan
-                          ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
-                          : "bg-blue-600 text-white hover:bg-blue-700"
+                      className={`w-full py-3 text-base font-medium rounded-lg transition-all ${
+                        isCurrentPlan ? "" : ""
                       }`}
+                      style={{
+                        backgroundColor: isCurrentPlan
+                          ? colors.surface
+                          : colors.primary,
+                        color: isCurrentPlan ? colors.onCard : colors.onPrimary,
+                        border: isCurrentPlan
+                          ? `1px solid ${colors.border}`
+                          : "none",
+                      }}
                       onClick={buttonAction}
                       disabled={isCurrentPlan}
                     >
@@ -710,10 +824,15 @@ export default function SubscriptionPage() {
 
       {/* Upgrade Dialog */}
       <Dialog open={isUpgradeDialogOpen} onOpenChange={setIsUpgradeDialogOpen}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent
+          className="sm:max-w-[600px]"
+          style={{ backgroundColor: colors.card }}
+        >
           <DialogHeader>
-            <DialogTitle>Upgrade to {selectedPlan?.name}</DialogTitle>
-            <DialogDescription>
+            <DialogTitle style={{ color: colors.onCard }}>
+              Upgrade to {selectedPlan?.name}
+            </DialogTitle>
+            <DialogDescription style={{ color: colors.muted }}>
               Complete your payment to upgrade your subscription plan.
             </DialogDescription>
           </DialogHeader>
@@ -721,86 +840,116 @@ export default function SubscriptionPage() {
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="cardNumber">Card Number</Label>
+                <Label style={{ color: colors.onCard }}>Card Number</Label>
                 <Input
-                  id="cardNumber"
                   placeholder="1234 5678 9012 3456"
                   value={paymentForm.cardNumber}
                   onChange={(e) =>
                     handlePaymentFormChange("cardNumber", e.target.value)
                   }
+                  style={{
+                    backgroundColor: colors.surface,
+                    borderColor: colors.border,
+                    color: colors.onCard,
+                  }}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="cardName">Cardholder Name</Label>
+                <Label style={{ color: colors.onCard }}>Cardholder Name</Label>
                 <Input
-                  id="cardName"
                   placeholder="John Doe"
                   value={paymentForm.cardName}
                   onChange={(e) =>
                     handlePaymentFormChange("cardName", e.target.value)
                   }
+                  style={{
+                    backgroundColor: colors.surface,
+                    borderColor: colors.border,
+                    color: colors.onCard,
+                  }}
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="expiryDate">Expiry Date</Label>
+                <Label style={{ color: colors.onCard }}>Expiry Date</Label>
                 <Input
-                  id="expiryDate"
                   placeholder="MM/YY"
                   value={paymentForm.expiryDate}
                   onChange={(e) =>
                     handlePaymentFormChange("expiryDate", e.target.value)
                   }
+                  style={{
+                    backgroundColor: colors.surface,
+                    borderColor: colors.border,
+                    color: colors.onCard,
+                  }}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="cvv">CVV</Label>
+                <Label style={{ color: colors.onCard }}>CVV</Label>
                 <Input
-                  id="cvv"
                   placeholder="123"
                   value={paymentForm.cvv}
                   onChange={(e) =>
                     handlePaymentFormChange("cvv", e.target.value)
                   }
+                  style={{
+                    backgroundColor: colors.surface,
+                    borderColor: colors.border,
+                    color: colors.onCard,
+                  }}
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="address">Billing Address</Label>
+              <Label style={{ color: colors.onCard }}>Billing Address</Label>
               <Textarea
-                id="address"
                 placeholder="123 Main Street"
                 value={paymentForm.address}
                 onChange={(e) =>
                   handlePaymentFormChange("address", e.target.value)
                 }
+                style={{
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  color: colors.onCard,
+                }}
               />
             </div>
 
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="city">City</Label>
+                <Label style={{ color: colors.onCard }}>City</Label>
                 <Input
-                  id="city"
                   placeholder="New York"
                   value={paymentForm.city}
                   onChange={(e) =>
                     handlePaymentFormChange("city", e.target.value)
                   }
+                  style={{
+                    backgroundColor: colors.surface,
+                    borderColor: colors.border,
+                    color: colors.onCard,
+                  }}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="country">Country</Label>
+                <Label style={{ color: colors.onCard }}>Country</Label>
                 <Select
                   onValueChange={(value) =>
                     handlePaymentFormChange("country", value)
                   }
                 >
-                  <SelectTrigger>
+                  <SelectTrigger
+                    style={{
+                      backgroundColor: colors.surface,
+                      borderColor: colors.border,
+                      color: colors.onCard,
+                    }}
+                  >
                     <SelectValue placeholder="Select country" />
                   </SelectTrigger>
                   <SelectContent>
@@ -813,22 +962,34 @@ export default function SubscriptionPage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="postalCode">Postal Code</Label>
+                <Label style={{ color: colors.onCard }}>Postal Code</Label>
                 <Input
-                  id="postalCode"
                   placeholder="10001"
                   value={paymentForm.postalCode}
                   onChange={(e) =>
                     handlePaymentFormChange("postalCode", e.target.value)
                   }
+                  style={{
+                    backgroundColor: colors.surface,
+                    borderColor: colors.border,
+                    color: colors.onCard,
+                  }}
                 />
               </div>
             </div>
 
-            <div className="bg-gray-50 p-4 rounded-lg">
+            <div
+              className="p-4 rounded-lg"
+              style={{ backgroundColor: colors.surface }}
+            >
               <div className="flex justify-between items-center">
-                <span className="font-medium">Total Amount:</span>
-                <span className="font-bold text-lg">
+                <span className="font-medium" style={{ color: colors.onCard }}>
+                  Total Amount:
+                </span>
+                <span
+                  className="font-bold text-lg"
+                  style={{ color: colors.primary }}
+                >
                   {selectedPlan &&
                     formatPrice(
                       billingCycle === "yearly"
@@ -845,12 +1006,21 @@ export default function SubscriptionPage() {
             <Button
               variant="outline"
               onClick={() => setIsUpgradeDialogOpen(false)}
+              style={{
+                backgroundColor: colors.surface,
+                borderColor: colors.border,
+                color: colors.onCard,
+              }}
             >
               Cancel
             </Button>
             <Button
               onClick={handlePaymentSubmit}
               disabled={isProcessingPayment}
+              style={{
+                backgroundColor: colors.primary,
+                color: colors.onPrimary,
+              }}
             >
               {isProcessingPayment ? (
                 <>
@@ -868,86 +1038,213 @@ export default function SubscriptionPage() {
       {/* Tooltip */}
       {tooltip.visible && (
         <div
-          className="fixed bg-black bg-opacity-90 text-white text-xs rounded py-2 px-3 pointer-events-none z-50 max-w-xs shadow-lg"
-          style={{ left: tooltip.x + 10, top: tooltip.y + 10 }}
+          className="fixed text-xs rounded py-2 px-3 pointer-events-none z-50 max-w-xs shadow-lg"
+          style={{
+            left: tooltip.x + 10,
+            top: tooltip.y + 10,
+            backgroundColor: colors.card,
+            color: colors.onCard,
+            border: `1px solid ${colors.border}`,
+          }}
         >
           {tooltip.content}
         </div>
       )}
 
       {/* Value Proposition Section */}
-      <div className="bg-muted/30 py-16">
+      <div className="py-16" style={{ backgroundColor: colors.surface }}>
         <div className="container mx-auto px-4 text-center">
-          <h2 className="font-space-grotesk text-3xl font-bold text-foreground mb-8">
+          <h2
+            className="text-3xl font-bold mb-8"
+            style={{ color: colors.onCard }}
+          >
             Why Choose Our Platform?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <div className="space-y-4">
-              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                <Zap className="h-6 w-6 text-primary" />
+            <Card className="p-6" style={{ backgroundColor: colors.card }}>
+              <div className="flex flex-col items-center space-y-4">
+                <div
+                  className="w-16 h-16 rounded-full flex items-center justify-center"
+                  style={{ backgroundColor: `${colors.primary}10` }}
+                >
+                  <Zap className="h-8 w-8" style={{ color: colors.primary }} />
+                </div>
+                <h3
+                  className="text-xl font-semibold"
+                  style={{ color: colors.onCard }}
+                >
+                  Lightning Fast
+                </h3>
+                <p className="text-center" style={{ color: colors.muted }}>
+                  Experience blazing-fast performance with our optimized
+                  infrastructure
+                </p>
               </div>
-              <h3 className="font-space-grotesk text-xl font-semibold">
-                Lightning Fast
-              </h3>
-              <p className="text-muted-foreground">
-                Experience blazing-fast performance with our optimized
-                infrastructure
-              </p>
-            </div>
-            <div className="space-y-4">
-              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                <Star className="h-6 w-6 text-primary" />
+            </Card>
+            <Card className="p-6" style={{ backgroundColor: colors.card }}>
+              <div className="flex flex-col items-center space-y-4">
+                <div
+                  className="w-16 h-16 rounded-full flex items-center justify-center"
+                  style={{ backgroundColor: `${colors.primary}10` }}
+                >
+                  <Star className="h-8 w-8" style={{ color: colors.primary }} />
+                </div>
+                <h3
+                  className="text-xl font-semibold"
+                  style={{ color: colors.onCard }}
+                >
+                  Premium Quality
+                </h3>
+                <p className="text-center" style={{ color: colors.muted }}>
+                  Built with attention to detail and industry best practices
+                </p>
               </div>
-              <h3 className="font-space-grotesk text-xl font-semibold">
-                Premium Quality
-              </h3>
-              <p className="text-muted-foreground">
-                Built with attention to detail and industry best practices
-              </p>
-            </div>
-            <div className="space-y-4">
-              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                <Crown className="h-6 w-6 text-primary" />
+            </Card>
+            <Card className="p-6" style={{ backgroundColor: colors.card }}>
+              <div className="flex flex-col items-center space-y-4">
+                <div
+                  className="w-16 h-16 rounded-full flex items-center justify-center"
+                  style={{ backgroundColor: `${colors.primary}10` }}
+                >
+                  <Crown
+                    className="h-8 w-8"
+                    style={{ color: colors.primary }}
+                  />
+                </div>
+                <h3
+                  className="text-xl font-semibold"
+                  style={{ color: colors.onCard }}
+                >
+                  Enterprise Ready
+                </h3>
+                <p className="text-center" style={{ color: colors.muted }}>
+                  Scalable solutions that grow with your business needs
+                </p>
               </div>
-              <h3 className="font-space-grotesk text-xl font-semibold">
-                Enterprise Ready
-              </h3>
-              <p className="text-muted-foreground">
-                Scalable solutions that grow with your business needs
-              </p>
-            </div>
+            </Card>
+          </div>
+        </div>
+      </div>
+
+      {/* Features Section */}
+      <div className="py-16">
+        <div className="container mx-auto px-4">
+          <h2
+            className="text-3xl font-bold text-center mb-12"
+            style={{ color: colors.onCard }}
+          >
+            Powerful Features for Every Plan
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <Card className="p-6" style={{ backgroundColor: colors.card }}>
+              <div className="flex flex-col items-center space-y-4">
+                <div
+                  className="w-16 h-16 rounded-full flex items-center justify-center"
+                  style={{ backgroundColor: `${colors.primary}10` }}
+                >
+                  <Database
+                    className="h-8 w-8"
+                    style={{ color: colors.primary }}
+                  />
+                </div>
+                <h3
+                  className="text-xl font-semibold"
+                  style={{ color: colors.onCard }}
+                >
+                  Secure Storage
+                </h3>
+                <p className="text-center" style={{ color: colors.muted }}>
+                  Your data is encrypted and securely stored in our cloud
+                  infrastructure
+                </p>
+              </div>
+            </Card>
+            <Card className="p-6" style={{ backgroundColor: colors.card }}>
+              <div className="flex flex-col items-center space-y-4">
+                <div
+                  className="w-16 h-16 rounded-full flex items-center justify-center"
+                  style={{ backgroundColor: `${colors.primary}10` }}
+                >
+                  <BarChart3
+                    className="h-8 w-8"
+                    style={{ color: colors.primary }}
+                  />
+                </div>
+                <h3
+                  className="text-xl font-semibold"
+                  style={{ color: colors.onCard }}
+                >
+                  Advanced Analytics
+                </h3>
+                <p className="text-center" style={{ color: colors.muted }}>
+                  Get detailed insights into your usage and performance metrics
+                </p>
+              </div>
+            </Card>
+            <Card className="p-6" style={{ backgroundColor: colors.card }}>
+              <div className="flex flex-col items-center space-y-4">
+                <div
+                  className="w-16 h-16 rounded-full flex items-center justify-center"
+                  style={{ backgroundColor: `${colors.primary}10` }}
+                >
+                  <Settings
+                    className="h-8 w-8"
+                    style={{ color: colors.primary }}
+                  />
+                </div>
+                <h3
+                  className="text-xl font-semibold"
+                  style={{ color: colors.onCard }}
+                >
+                  Customizable
+                </h3>
+                <p className="text-center" style={{ color: colors.muted }}>
+                  Tailor the platform to match your specific business needs
+                </p>
+              </div>
+            </Card>
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="bg-card border-t border-border py-12">
+      <footer
+        className="py-12"
+        style={{
+          backgroundColor: colors.card,
+          borderTop: `1px solid ${colors.border}`,
+        }}
+      >
         <div className="container mx-auto px-4 text-center">
-          <p className="text-muted-foreground mb-4">
+          <p className="mb-4" style={{ color: colors.muted }}>
             Questions about our plans? We&apos;re here to help.
           </p>
-          <div className="flex flex-wrap justify-center gap-6 text-sm">
+          <div className="flex flex-wrap justify-center gap-6">
             <Link
               href="/"
-              className="text-primary hover:text-primary/80 transition-colors"
+              className="transition-colors"
+              style={{ color: colors.primary }}
             >
               Contact Support
             </Link>
             <Link
               href="/privacy-policy"
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="transition-colors"
+              style={{ color: colors.muted }}
             >
               Privacy Policy
             </Link>
             <Link
               href="/terms-of-service"
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="transition-colors"
+              style={{ color: colors.muted }}
             >
               Terms of Service
             </Link>
             <Link
               href="/faq"
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="transition-colors"
+              style={{ color: colors.muted }}
             >
               FAQ
             </Link>

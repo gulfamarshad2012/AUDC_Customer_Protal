@@ -1,4 +1,3 @@
-// app/invoices/page.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -31,6 +30,7 @@ import {
 } from "@/components/ui/select";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { colors } from "@/config/color-scheme";
 
 interface InvoiceHeader {
   invoice_id: string;
@@ -107,24 +107,83 @@ export default function InvoicesPage() {
 
     switch (status.toLowerCase()) {
       case "paid":
-        return <Badge className="bg-green-100 text-green-800">Paid</Badge>;
+        return (
+          <Badge 
+            className="bg-green-100 text-green-800"
+            style={{ 
+              backgroundColor: `${colors.success}20`,
+              color: colors.success
+            }}
+          >
+            Paid
+          </Badge>
+        );
       case "pending":
-        return <Badge className="bg-yellow-100 text-yellow-800">Pending</Badge>;
+        return (
+          <Badge 
+            className="bg-yellow-100 text-yellow-800"
+            style={{ 
+              backgroundColor: `${colors.warning}20`,
+              color: colors.warning
+            }}
+          >
+            Pending
+          </Badge>
+        );
       case "overdue":
-        return <Badge className="bg-red-100 text-red-800">Overdue</Badge>;
+        return (
+          <Badge 
+            className="bg-red-100 text-red-800"
+            style={{ 
+              backgroundColor: `${colors.error}20`,
+              color: colors.error
+            }}
+          >
+            Overdue
+          </Badge>
+        );
       case "cancelled":
-        return <Badge variant="destructive">Cancelled</Badge>;
+        return (
+          <Badge 
+            variant="destructive"
+            style={{ 
+              backgroundColor: `${colors.error}20`,
+              color: colors.error
+            }}
+          >
+            Cancelled
+          </Badge>
+        );
       default:
-        return <Badge variant="outline">{status}</Badge>;
+        return (
+          <Badge 
+            variant="outline"
+            style={{ 
+              backgroundColor: colors.surface,
+              color: colors.onCard,
+              borderColor: colors.border
+            }}
+          >
+            {status}
+          </Badge>
+        );
     }
   };
 
   return (
-    <div className="container max-w-full w-full mx-auto py-10">
-      <Card>
+    <div className="container max-w-full w-full mx-auto py-10" style={{ backgroundColor: colors.background }}>
+      <Card 
+        className="w-full"
+        style={{ 
+          backgroundColor: colors.card,
+          borderColor: colors.border,
+          border: `1px solid ${colors.border}`,
+          boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+        }}
+      >
         <CardHeader>
-          <CardTitle>Invoice Headers</CardTitle>
-          <CardDescription>
+          <CardTitle style={{ color: colors.onCard }}>Invoice Headers</CardTitle>
+          <CardDescription style={{ color: colors.muted }}>
             Manage and view all invoice headers in the system
           </CardDescription>
         </CardHeader>
@@ -136,9 +195,23 @@ export default function InvoicesPage() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full md:w-64"
+                style={{ 
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  color: colors.onCard,
+                  border: `1px solid ${colors.border}`,
+                }}
               />
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-full md:w-40">
+                <SelectTrigger 
+                  className="w-full md:w-40"
+                  style={{ 
+                    backgroundColor: colors.surface,
+                    borderColor: colors.border,
+                    color: colors.onCard,
+                    border: `1px solid ${colors.border}`,
+                  }}
+                >
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -150,38 +223,67 @@ export default function InvoicesPage() {
                 </SelectContent>
               </Select>
             </div>
-            <Button onClick={fetchInvoices} disabled={loading}>
+            <Button 
+              onClick={fetchInvoices} 
+              disabled={loading}
+              style={{ 
+                backgroundColor: colors.primary,
+                color: colors.onPrimary
+              }}
+            >
               {loading ? "Refreshing..." : "Refresh Data"}
             </Button>
           </div>
 
           {error && (
-            <div className="bg-red-50 text-red-800 p-4 rounded-md mb-6">
+            <div 
+              className="p-4 rounded-md mb-6"
+              style={{ 
+                backgroundColor: `${colors.error}20`,
+                color: colors.error,
+                border: `1px solid ${colors.error}`
+              }}
+            >
               Error: {error}
             </div>
           )}
 
-          <div className="rounded-md border">
+          <div 
+            className="rounded-md border overflow-hidden"
+            style={{ 
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+              border: `1px solid ${colors.border}`,
+            }}
+          >
             <Table>
-              <TableCaption>
+              <TableCaption style={{ color: colors.muted }}>
                 {filteredInvoices.length === 0
                   ? "No invoices found"
                   : `Showing ${currentItems.length} of ${filteredInvoices.length} invoices`}
               </TableCaption>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Invoice ID</TableHead>
-                  <TableHead>Account ID</TableHead>
-                  <TableHead>Billing Cycle</TableHead>
-                  <TableHead>Period</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Total Amount</TableHead>
-                  <TableHead>Created</TableHead>
+                <TableRow style={{ backgroundColor: colors.primaryLight }}>
+                  <TableHead style={{ color: colors.onPrimaryLight }}>Invoice ID</TableHead>
+                  <TableHead style={{ color: colors.onPrimaryLight }}>Account ID</TableHead>
+                  <TableHead style={{ color: colors.onPrimaryLight }}>Billing Cycle</TableHead>
+                  <TableHead style={{ color: colors.onPrimaryLight }}>Period</TableHead>
+                  <TableHead style={{ color: colors.onPrimaryLight }}>Status</TableHead>
+                  <TableHead className="text-right" style={{ color: colors.onPrimaryLight }}>Total Amount</TableHead>
+                  <TableHead style={{ color: colors.onPrimaryLight }}>Created</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {currentItems.map((invoice) => (
-                  <TableRow key={invoice.invoice_id} onClick={() => router.push(`/dashboard/invoice-headers/${invoice.invoice_id}/invoice_lines`)}>
+                {currentItems.map((invoice, index) => (
+                  <TableRow 
+                    key={invoice.invoice_id} 
+                    onClick={() => router.push(`/dashboard/invoice-headers/${invoice.invoice_id}/invoice_lines`)}
+                    className="cursor-pointer hover:bg-opacity-70"
+                    style={{ 
+                      backgroundColor: index % 2 === 0 ? colors.card : colors.surface,
+                      color: colors.onCard
+                    }}
+                  >
                     <TableCell className="font-medium">
                       {invoice.invoice_id.substring(0, 8)}...
                     </TableCell>
@@ -212,7 +314,7 @@ export default function InvoicesPage() {
 
           {totalPages > 1 && (
             <div className="flex items-center justify-between space-x-2 py-4">
-              <div className="text-sm text-muted-foreground">
+              <div className="text-sm" style={{ color: colors.muted }}>
                 Page {currentPage} of {totalPages}
               </div>
               <div className="flex space-x-2">
@@ -223,6 +325,12 @@ export default function InvoicesPage() {
                     setCurrentPage((prev) => Math.max(prev - 1, 1))
                   }
                   disabled={currentPage === 1}
+                  style={{ 
+                    backgroundColor: colors.surface,
+                    borderColor: colors.border,
+                    color: colors.onCard,
+                    border: `1px solid ${colors.border}`,
+                  }}
                 >
                   Previous
                 </Button>
@@ -233,6 +341,12 @@ export default function InvoicesPage() {
                     setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                   }
                   disabled={currentPage === totalPages}
+                  style={{ 
+                    backgroundColor: colors.surface,
+                    borderColor: colors.border,
+                    color: colors.onCard,
+                    border: `1px solid ${colors.border}`,
+                  }}
                 >
                   Next
                 </Button>

@@ -1,3 +1,4 @@
+// File: components/AccountRegistrationForm.tsx
 "use client";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Building2, User, CreditCard, Settings, Check } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { colors } from "@/config/color-scheme";
 
 interface FormData {
   company_name: string;
@@ -88,7 +90,7 @@ const paymentMethods = [
   { value: "invoice", label: "Invoice" },
 ];
 
-export default function App() {
+export default function AccountRegistrationForm() {
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionStatus, setSubmissionStatus] = useState<
@@ -103,7 +105,6 @@ export default function App() {
     setIsSubmitting(true);
     setSubmissionStatus("idle");
 
-    // Destructure the form data to match the Supabase table schema
     const {
       company_name,
       company_registration_no,
@@ -126,7 +127,6 @@ export default function App() {
     } = formData;
 
     try {
-      // Perform the insert into the 'customer_portal.accounts' table
       const { data, error } = await supabase
         .schema("customer_portal")
         .from("accounts")
@@ -150,7 +150,6 @@ export default function App() {
             preference_currency,
             timezone,
             payment_method,
-            // You may need to add created_by/modified_by fields based on your auth setup
           },
         ]);
 
@@ -170,13 +169,27 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-6">
-      <Card className="w-full max-w-2xl mx-auto rounded-xl shadow-lg">
+    <div className="flex flex-col items-center justify-center min-h-screen p-6" style={{ backgroundColor: colors.background }}>
+      <Card 
+        className="w-full max-w-2xl mx-auto rounded-xl"
+        style={{ 
+          backgroundColor: colors.card,
+          borderColor: colors.border,
+          border: `1px solid ${colors.border}`,
+          boxShadow: `0 4px 6px -1px ${colors.shadow}`,
+        }}
+      >
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">
+          <CardTitle 
+            className="text-2xl font-bold text-center"
+            style={{ color: colors.onCard }}
+          >
             Company Account Registration
           </CardTitle>
-          <CardDescription className="text-center text-gray-500">
+          <CardDescription 
+            className="text-center"
+            style={{ color: colors.muted }}
+          >
             Please fill out all the information below to create your company
             account.
           </CardDescription>
@@ -184,13 +197,23 @@ export default function App() {
         <CardContent>
           <div className="space-y-6">
             {/* Company Details Section */}
-            <div className="space-y-4 rounded-lg p-6 bg-gray-50 border border-gray-200">
-              <h4 className="text-lg font-semibold flex items-center gap-2 text-gray-700">
-                <Building2 className="w-5 h-5 text-gray-600" /> Company Details
+            <div 
+              className="space-y-4 rounded-lg p-6"
+              style={{ 
+                backgroundColor: colors.surface,
+                borderColor: colors.border,
+                border: `1px solid ${colors.border}`,
+              }}
+            >
+              <h4 className="text-lg font-semibold flex items-center gap-2" style={{ color: colors.onCard }}>
+                <Building2 className="w-5 h-5" style={{ color: colors.primary }} /> 
+                <span>Company Details</span>
               </h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="company_name">Company Name *</Label>
+                  <Label htmlFor="company_name" style={{ color: colors.muted }}>
+                    Company Name *
+                  </Label>
                   <Input
                     id="company_name"
                     value={formData.company_name}
@@ -199,10 +222,16 @@ export default function App() {
                     }
                     placeholder="Enter your company name"
                     required
+                    style={{ 
+                      backgroundColor: colors.card,
+                      borderColor: colors.border,
+                      color: colors.onCard,
+                      border: `1px solid ${colors.border}`,
+                    }}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="company_registration_no">
+                  <Label htmlFor="company_registration_no" style={{ color: colors.muted }}>
                     Company Registration Number
                   </Label>
                   <Input
@@ -212,19 +241,35 @@ export default function App() {
                       updateFormData("company_registration_no", e.target.value)
                     }
                     placeholder="Enter registration number (optional)"
+                    style={{ 
+                      backgroundColor: colors.card,
+                      borderColor: colors.border,
+                      color: colors.onCard,
+                      border: `1px solid ${colors.border}`,
+                    }}
                   />
                 </div>
               </div>
             </div>
 
             {/* Contact Information Section */}
-            <div className="space-y-4 rounded-lg p-6 bg-gray-50 border border-gray-200">
-              <h4 className="text-lg font-semibold flex items-center gap-2 text-gray-700">
-                <User className="w-5 h-5 text-gray-600" /> Contact Information
+            <div 
+              className="space-y-4 rounded-lg p-6"
+              style={{ 
+                backgroundColor: colors.surface,
+                borderColor: colors.border,
+                border: `1px solid ${colors.border}`,
+              }}
+            >
+              <h4 className="text-lg font-semibold flex items-center gap-2" style={{ color: colors.onCard }}>
+                <User className="w-5 h-5" style={{ color: colors.primary }} /> 
+                <span>Contact Information</span>
               </h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="contact_name">Contact Name *</Label>
+                  <Label htmlFor="contact_name" style={{ color: colors.muted }}>
+                    Contact Name *
+                  </Label>
                   <Input
                     id="contact_name"
                     value={formData.contact_name}
@@ -233,10 +278,18 @@ export default function App() {
                     }
                     placeholder="Enter primary contact name"
                     required
+                    style={{ 
+                      backgroundColor: colors.card,
+                      borderColor: colors.border,
+                      color: colors.onCard,
+                      border: `1px solid ${colors.border}`,
+                    }}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="contact_email">Contact Email *</Label>
+                  <Label htmlFor="contact_email" style={{ color: colors.muted }}>
+                    Contact Email *
+                  </Label>
                   <Input
                     id="contact_email"
                     type="email"
@@ -246,11 +299,19 @@ export default function App() {
                     }
                     placeholder="Enter contact email address"
                     required
+                    style={{ 
+                      backgroundColor: colors.card,
+                      borderColor: colors.border,
+                      color: colors.onCard,
+                      border: `1px solid ${colors.border}`,
+                    }}
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="contact_number">Contact Number</Label>
+                <Label htmlFor="contact_number" style={{ color: colors.muted }}>
+                  Contact Number
+                </Label>
                 <Input
                   id="contact_number"
                   type="tel"
@@ -259,18 +320,34 @@ export default function App() {
                     updateFormData("contact_number", e.target.value)
                   }
                   placeholder="Enter phone number"
+                  style={{ 
+                    backgroundColor: colors.card,
+                    borderColor: colors.border,
+                    color: colors.onCard,
+                    border: `1px solid ${colors.border}`,
+                  }}
                 />
               </div>
             </div>
 
             {/* Billing Address Section */}
-            <div className="space-y-4 rounded-lg p-6 bg-gray-50 border border-gray-200">
-              <h4 className="text-lg font-semibold flex items-center gap-2 text-gray-700">
-                <CreditCard className="w-5 h-5 text-gray-600" /> Billing Address
+            <div 
+              className="space-y-4 rounded-lg p-6"
+              style={{ 
+                backgroundColor: colors.surface,
+                borderColor: colors.border,
+                border: `1px solid ${colors.border}`,
+              }}
+            >
+              <h4 className="text-lg font-semibold flex items-center gap-2" style={{ color: colors.onCard }}>
+                <CreditCard className="w-5 h-5" style={{ color: colors.primary }} /> 
+                <span>Billing Address</span>
               </h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="billing_name">Billing Name *</Label>
+                  <Label htmlFor="billing_name" style={{ color: colors.muted }}>
+                    Billing Name *
+                  </Label>
                   <Input
                     id="billing_name"
                     value={formData.billing_name}
@@ -279,10 +356,18 @@ export default function App() {
                     }
                     placeholder="Name for billing"
                     required
+                    style={{ 
+                      backgroundColor: colors.card,
+                      borderColor: colors.border,
+                      color: colors.onCard,
+                      border: `1px solid ${colors.border}`,
+                    }}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="billing_email">Billing Email *</Label>
+                  <Label htmlFor="billing_email" style={{ color: colors.muted }}>
+                    Billing Email *
+                  </Label>
                   <Input
                     id="billing_email"
                     type="email"
@@ -292,11 +377,19 @@ export default function App() {
                     }
                     placeholder="Email for billing notifications"
                     required
+                    style={{ 
+                      backgroundColor: colors.card,
+                      borderColor: colors.border,
+                      color: colors.onCard,
+                      border: `1px solid ${colors.border}`,
+                    }}
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="billing_address_line1">Address Line 1 *</Label>
+                <Label htmlFor="billing_address_line1" style={{ color: colors.muted }}>
+                  Address Line 1 *
+                </Label>
                 <Input
                   id="billing_address_line1"
                   value={formData.billing_address_line1}
@@ -305,10 +398,18 @@ export default function App() {
                   }
                   placeholder="Street address"
                   required
+                  style={{ 
+                    backgroundColor: colors.card,
+                    borderColor: colors.border,
+                    color: colors.onCard,
+                    border: `1px solid ${colors.border}`,
+                  }}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="billing_address_line2">Address Line 2</Label>
+                <Label htmlFor="billing_address_line2" style={{ color: colors.muted }}>
+                  Address Line 2
+                </Label>
                 <Input
                   id="billing_address_line2"
                   value={formData.billing_address_line2}
@@ -316,11 +417,19 @@ export default function App() {
                     updateFormData("billing_address_line2", e.target.value)
                   }
                   placeholder="Apartment, suite, etc. (optional)"
+                  style={{ 
+                    backgroundColor: colors.card,
+                    borderColor: colors.border,
+                    color: colors.onCard,
+                    border: `1px solid ${colors.border}`,
+                  }}
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="billing_city">City *</Label>
+                  <Label htmlFor="billing_city" style={{ color: colors.muted }}>
+                    City *
+                  </Label>
                   <Input
                     id="billing_city"
                     value={formData.billing_city}
@@ -329,10 +438,18 @@ export default function App() {
                     }
                     placeholder="City"
                     required
+                    style={{ 
+                      backgroundColor: colors.card,
+                      borderColor: colors.border,
+                      color: colors.onCard,
+                      border: `1px solid ${colors.border}`,
+                    }}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="billing_state">State/Province *</Label>
+                  <Label htmlFor="billing_state" style={{ color: colors.muted }}>
+                    State/Province *
+                  </Label>
                   <Input
                     id="billing_state"
                     value={formData.billing_state}
@@ -341,12 +458,20 @@ export default function App() {
                     }
                     placeholder="State or Province"
                     required
+                    style={{ 
+                      backgroundColor: colors.card,
+                      borderColor: colors.border,
+                      color: colors.onCard,
+                      border: `1px solid ${colors.border}`,
+                    }}
                   />
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="billing_postal_code">Postal Code *</Label>
+                  <Label htmlFor="billing_postal_code" style={{ color: colors.muted }}>
+                    Postal Code *
+                  </Label>
                   <Input
                     id="billing_postal_code"
                     value={formData.billing_postal_code}
@@ -355,10 +480,18 @@ export default function App() {
                     }
                     placeholder="Postal/ZIP code"
                     required
+                    style={{ 
+                      backgroundColor: colors.card,
+                      borderColor: colors.border,
+                      color: colors.onCard,
+                      border: `1px solid ${colors.border}`,
+                    }}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="billing_country">Country *</Label>
+                  <Label htmlFor="billing_country" style={{ color: colors.muted }}>
+                    Country *
+                  </Label>
                   <Input
                     id="billing_country"
                     value={formData.billing_country}
@@ -367,28 +500,50 @@ export default function App() {
                     }
                     placeholder="Country"
                     required
+                    style={{ 
+                      backgroundColor: colors.card,
+                      borderColor: colors.border,
+                      color: colors.onCard,
+                      border: `1px solid ${colors.border}`,
+                    }}
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="tax_no">Tax Number</Label>
+                <Label htmlFor="tax_no" style={{ color: colors.muted }}>
+                  Tax Number
+                </Label>
                 <Input
                   id="tax_no"
                   value={formData.tax_no}
                   onChange={(e) => updateFormData("tax_no", e.target.value)}
                   placeholder="VAT/Tax ID (optional)"
+                  style={{ 
+                    backgroundColor: colors.card,
+                    borderColor: colors.border,
+                    color: colors.onCard,
+                    border: `1px solid ${colors.border}`,
+                  }}
                 />
               </div>
             </div>
 
             {/* Account Settings Section */}
-            <div className="space-y-4 rounded-lg p-6 bg-gray-50 border border-gray-200">
-              <h4 className="text-lg font-semibold flex items-center gap-2 text-gray-700">
-                <Settings className="w-5 h-5 text-gray-600" /> Account Settings
+            <div 
+              className="space-y-4 rounded-lg p-6"
+              style={{ 
+                backgroundColor: colors.surface,
+                borderColor: colors.border,
+                border: `1px solid ${colors.border}`,
+              }}
+            >
+              <h4 className="text-lg font-semibold flex items-center gap-2" style={{ color: colors.onCard }}>
+                <Settings className="w-5 h-5" style={{ color: colors.primary }} /> 
+                <span>Account Settings</span>
               </h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="preference_currency">
+                  <Label htmlFor="preference_currency" style={{ color: colors.muted }}>
                     Preferred Currency
                   </Label>
                   <Select
@@ -397,7 +552,12 @@ export default function App() {
                       updateFormData("preference_currency", value)
                     }
                   >
-                    <SelectTrigger>
+                    <SelectTrigger style={{ 
+                      backgroundColor: colors.card,
+                      borderColor: colors.border,
+                      color: colors.onCard,
+                      border: `1px solid ${colors.border}`,
+                    }}>
                       <SelectValue placeholder="Select currency" />
                     </SelectTrigger>
                     <SelectContent>
@@ -410,12 +570,19 @@ export default function App() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="timezone">Timezone</Label>
+                  <Label htmlFor="timezone" style={{ color: colors.muted }}>
+                    Timezone
+                  </Label>
                   <Select
                     value={formData.timezone}
                     onValueChange={(value) => updateFormData("timezone", value)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger style={{ 
+                      backgroundColor: colors.card,
+                      borderColor: colors.border,
+                      color: colors.onCard,
+                      border: `1px solid ${colors.border}`,
+                    }}>
                       <SelectValue placeholder="Select timezone" />
                     </SelectTrigger>
                     <SelectContent>
@@ -429,14 +596,21 @@ export default function App() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="payment_method">Preferred Payment Method</Label>
+                <Label htmlFor="payment_method" style={{ color: colors.muted }}>
+                  Preferred Payment Method
+                </Label>
                 <Select
                   value={formData.payment_method}
                   onValueChange={(value) =>
                     updateFormData("payment_method", value)
                   }
                 >
-                  <SelectTrigger>
+                  <SelectTrigger style={{ 
+                    backgroundColor: colors.card,
+                    borderColor: colors.border,
+                    color: colors.onCard,
+                    border: `1px solid ${colors.border}`,
+                  }}>
                     <SelectValue placeholder="Select payment method" />
                   </SelectTrigger>
                   <SelectContent>
@@ -455,8 +629,14 @@ export default function App() {
                   onCheckedChange={(checked) =>
                     updateFormData("is_active", checked as boolean)
                   }
+                  style={{ 
+                    backgroundColor: colors.card,
+                    borderColor: colors.border,
+                    color: colors.onCard,
+                    border: `1px solid ${colors.border}`,
+                  }}
                 />
-                <Label htmlFor="is_active" className="text-sm">
+                <Label htmlFor="is_active" className="text-sm" style={{ color: colors.muted }}>
                   Activate account immediately after creation
                 </Label>
               </div>
@@ -468,16 +648,20 @@ export default function App() {
                 onClick={handleSubmit}
                 disabled={isSubmitting}
                 className="w-full flex items-center gap-2"
+                style={{ 
+                  backgroundColor: colors.primary,
+                  color: colors.onPrimary,
+                }}
               >
                 {isSubmitting ? "Creating Account..." : "Create Account"}
               </Button>
               {submissionStatus === "success" && (
-                <div className="text-center text-green-600 font-semibold flex items-center justify-center gap-2">
+                <div className="text-center font-semibold flex items-center justify-center gap-2" style={{ color: colors.success }}>
                   <Check className="w-5 h-5" /> Account created successfully!
                 </div>
               )}
               {submissionStatus === "error" && (
-                <div className="text-center text-red-600 font-semibold">
+                <div className="text-center font-semibold" style={{ color: colors.error }}>
                   Failed to create account. Please try again.
                 </div>
               )}
